@@ -272,9 +272,16 @@ FAQ의 입증 가능성 요건 때문에 제출물에는 **실측한 수치만**
 
 1. 조건 추출: 취약점별 **취약 조건 카드**(수정 커밋 diff, 변경 함수, 트리거 설정·입력, 공개 진입 API)를 정확 조회하고, 없으면 diff에서 LLM이 조건만 요약한다(라인 인용). 카드는 하이브리드(BM25+벡터) 색인.
 2. 코드 근거: 색인 없이 **에이전틱 검색**(grep, LSP 참조, 호출 그래프, 파일 범위 읽기)으로 대상 코드에서 조건을 찾는다. 질의 대부분이 정확한 심볼이라 grep·LSP가 주력이다(학술·프리프린트 혼재 근거). 검색 도구는 샌드박스 안에서 읽기 전용으로 돈다.
-3. 구조화 판정: `Verdict = {condition, snippets[file:line], call_path[], verdict, justification_code}`.
-4. 비대칭 규칙: 기본은 affected. **증거 없는 "영향 없음" 금지.** not_affected는 (a) 심볼 부재·미import, (b) 과근사 호출 그래프에서 경로 없음, (c) 설정·입력 조건 미충족을 file:line으로 증명할 때만. 그 외는 uncertain.
-5. 결정론 검증: 인용 라인 실존·심볼 포함, 호출 경로 엣지 재확인, 수치가 사실 조회 값과 일치하는지 대조. 검증 실패면 uncertain으로 내린다.
+3. 구조화 증거: `Evidence = {condition, snippets[file:line], call_path[], justification_code}`. 1~3단계는 도구를 호출하는 증거 수집 에이전트(OpenAI Responses API + function calling)가 맡는다.
+4. 확률 판정: 수집한 증거를 입력으로 **OpenAI Decisions API**(`POST /v1/decisions`)에 `predicate` 질문을 던진다(예: "취약 함수가 도달 가능한가", "트리거 설정·입력 조건이 충족되는가"). 결과는 질문별 확률이다. Decisions API는 텍스트·JSON 입력에 타입 있는 답(predicate 확률·choice·score)을 돌려주고, 한 요청에 질문 최대 400개, GA, 모델은 `gpt-6-luna`만 지원한다(공식 확인, [OpenAI Decisions 가이드](https://developers.openai.com/api/docs/guides/decisions)). 자유 형식 근거 추출·도구 호출은 Decisions가 아니라 3단계에서 한다(문서 권고와 동일).
+5. 비대칭 규칙 + 임계값: 기본은 affected. **증거 없는 "영향 없음" 금지.**
+   - p ≥ 상한 → affected
+   - p ≤ 하한 **그리고** (a) 심볼 부재·미import, (b) 과근사 호출 그래프에서 경로 없음, (c) 설정·입력 조건 미충족 중 하나가 file:line으로 증명됨 → not_affected
+   - 그 외 → uncertain(사람 검토 큐)
+   - 상한·하한은 노드 파라미터이며, 평가셋 라벨로 보정해 정한다(6.1). 문서도 "라벨 예시로 라우팅·검토 임계값을 정하라"고 권고한다(공식 확인).
+6. 결정론 검증: 인용 라인 실존·심볼 포함, 호출 경로 엣지 재확인, 수치가 사실 조회 값과 일치하는지 대조. 검증 실패면 확률과 무관하게 uncertain으로 내린다.
+
+대량 선별에도 같은 API를 쓴다. 스캔 결과 수천 건의 1차 분류(예: Mission·노출 등급 `choice`, "권고문에 workaround가 있는가" `predicate`)를 요청당 최대 400문항으로 묶는다. 다단계로 앞 답에 의존하는 판정은 요청을 나눈다(문서 권고).
 
 근거: Vul-RAG(diff 기반 지식으로 정확도 16~24% 향상, 학술), CognixShield(F1 89%, 학술), VEX-Bench(이진 약 80% F1, 학술). 학술 연구에서 정확도를 올린 것은 CVE 설명문 RAG가 아니라 패치 지식 + 코드 검색 조합이다.
 
@@ -318,6 +325,7 @@ EPSS 0.1은 로컬 정책(FIRST 공식 임계값 없음, 공식 확인). 임계�
 
 - MCP 노출은 선택이다. 노드 카탈로그를 MCP 서버로 열면 아이멤버 3.0처럼 MCP를 지원하는 에이전트 환경(공식 확인)에서 같은 노드를 호출할 수 있다(해석).
 - 판단 노드 내부의 LLM 호출과 작성기 LLM은 분리한다. 작성기는 무엇을 돌릴지 정하고, 판정은 판단 노드의 규칙(비대칭 규칙·결정론 검증) 안에서만 내린다.
+- LLM 사용처(제안): 파이프라인 작성기 = Structured Outputs(graph JSON 스키마 제약), 증거 수집·조치안 문장 = Responses API + function calling, 판정·분류 = Decisions API. 제공자는 OpenAI로 통일한다.
 
 ### 4.8 지식 계층
 
@@ -339,7 +347,7 @@ EPSS 0.1은 로컬 정책(FIRST 공식 임계값 없음, 공식 확인). 임계�
 | 잘못된 조치 실행 | 행동 노드는 T0 구조화 입력만 받음. 티켓 발송·PR·비밀 교체는 사람 승인, 자동 병합 없음 |
 | 에이전트가 만든 그래프의 오작동 | 카탈로그 노드만 사용, 타입·승인 게이트 검사 통과 전 실행 불가, 실행 전 사람 승인 |
 | 권한 남용 | 분석 토큰은 저장소 범위 읽기 전용, PR 쓰기는 별도 ID(Invariant Labs 시연, 벤더 주장) |
-| 비밀정보·사내 정보 유출 | 스캐너 컨테이너에 비밀 미주입·네트워크 허용 목록. 외부 LLM 전송 시 서비스 ID·호스트명 가명 처리, 전송 기록, 로그 비밀 제거 |
+| 비밀정보·사내 정보 유출 | 스캐너 컨테이너에 비밀 미주입·네트워크 허용 목록. 외부 LLM 전송 시 서비스 ID·호스트명 가명 처리, 전송 기록, 로그 비밀 제거. Decisions API 지역 처리는 미국·EU만 지원(공식 확인)이므로 사내 적용 시 코드 조각 전송 범위를 최소화하고 데이터 보존 정책(ZDR 대상 여부)을 확인 |
 | 도구 자체 침해 | 도구 버전·digest·DB 스냅샷 기록, digest 고정 이미지만 실행(CVE-2026-33634, 공식 확인) |
 | 판정 이력 오염·AI의 사람 판정 덮어쓰기 | 사람 확정 판정은 AI가 수정 불가(4.10.2). 판정 이력 RAG는 T0 레코드만 색인, 검색 결과는 참고 근거일 뿐 판정 확정 근거가 아님 |
 
@@ -438,8 +446,9 @@ EPSS 0.1은 로컬 정책(FIRST 공식 임계값 없음, 공식 확인). 임계�
 | --- | --- |
 | 질문 | 근거 계층(RAG·코드 검색)이 판정 정확도와 거짓 "영향 없음"을 얼마나 바꾸는가 |
 | 데이터 | 자체 픽스처 30~50건(nodejs-goof 포크 등 약 10개 저장소 × 3~5개 CVE, 직접/전이·도달/비도달·KEV/비KEV 층화, "수정 버전 없음"·악성 패키지 사례 포함, 학습 기준일 이후 CVE 블라인드 홀드아웃) + 가능하면 VEX-Bench 부분집합 |
-| 비교 | (A) 스캐너 그대로(전부 affected) · (B) LLM 단독 · (C) RAG(취약 조건 카드) · (D) C + 에이전틱 코드 검색 + 검증 |
+| 비교 | (A) 스캐너 그대로(전부 affected) · (B) LLM 단독 · (C) RAG(취약 조건 카드) · (D) C + 에이전틱 코드 검색 + 검증 · (E) D의 증거 + Decisions API 확률 판정 + 임계값 |
 | 주 지표 | 이진 F1, **거짓 not_affected 비율**, 근거 유효율, 조치 대상 축소율 |
+| 보정 지표 | (E)의 확률 보정: 신뢰도 구간별 실제 정답률(reliability diagram), ECE·Brier score. 임계값별 거짓 not_affected 비율 대 uncertain 비율(사람 검토량) 곡선으로 상한·하한을 정함. 임계값 결정용과 보고용 데이터를 분리 |
 | 기준선 | VEX-Bench 공개 수치 이진 약 80% F1(학술) |
 
 ### 6.2 핵심 실험 2: 그룹 영향 열거
@@ -571,6 +580,7 @@ EPSS 0.1은 로컬 정책(FIRST 공식 임계값 없음, 공식 확인). 임계�
 **표준·도구**
 
 - [CISA SSVC](https://www.cisa.gov/stakeholder-specific-vulnerability-categorization-ssvc), [OpenVEX spec](https://github.com/openvex/spec/blob/main/OPENVEX-SPEC.md), [CycloneDX](https://cyclonedx.org/), [OSV](https://osv.dev/), [GUAC patch plan](https://docs.guac.sh/guac/patch-plan/), [Dependency-Track](https://docs.dependencytrack.org/triage/analysis-states/)
+- [OpenAI Decisions API 가이드](https://developers.openai.com/api/docs/guides/decisions) — 판단 노드 확률 판정·대량 분류(2026-10-30 확인, GA)
 - [Syft](https://github.com/anchore/syft), [Grype](https://github.com/anchore/grype), [Grype configuration(DB 수명)](https://oss.anchore.com/docs/reference/grype/configuration/), [OSV-Scanner](https://github.com/google/osv-scanner), [snyk-labs/nodejs-goof](https://github.com/snyk-labs/nodejs-goof)
 
 **워크플로우·UI 참고**

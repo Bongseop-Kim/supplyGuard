@@ -1,0 +1,282 @@
+[
+ {
+  "ids": [
+   "GHSA-35jh-r3h4-6jhm",
+   "CVE-2021-23337"
+  ],
+  "package": "lodash",
+  "condition": "_.template에 공격자가 제어하는 options(variable 등)가 들어가면 명령·코드 주입",
+  "symbols": [
+   "template"
+  ],
+  "trigger": "template()의 options 인자가 외부 입력",
+  "source": "https://osv.dev/vulnerability/GHSA-35jh-r3h4-6jhm",
+  "workaround": "template() 호출에 외부 입력 options를 넘기지 않는다"
+ },
+ {
+  "ids": [
+   "GHSA-r5fr-rjxr-66jc",
+   "CVE-2026-4800"
+  ],
+  "package": "lodash",
+  "condition": "_.template의 imports 키 이름을 통한 코드 주입",
+  "symbols": [
+   "template"
+  ],
+  "trigger": "template() options.imports 키가 외부 입력",
+  "source": "https://osv.dev/vulnerability/GHSA-r5fr-rjxr-66jc"
+ },
+ {
+  "ids": [
+   "GHSA-f23m-r3pf-42rh",
+   "CVE-2026-2950"
+  ],
+  "package": "lodash",
+  "condition": "_.unset·_.omit 경로 인자에 배열 경로로 프로토타입 오염",
+  "symbols": [
+   "unset",
+   "omit"
+  ],
+  "trigger": "unset/omit의 path 인자가 외부 입력",
+  "source": "https://osv.dev/vulnerability/GHSA-f23m-r3pf-42rh"
+ },
+ {
+  "ids": [
+   "GHSA-xxjr-mmjv-4gpg",
+   "CVE-2025-13465"
+  ],
+  "package": "lodash",
+  "condition": "_.unset·_.omit에서 프로토타입 오염",
+  "symbols": [
+   "unset",
+   "omit"
+  ],
+  "trigger": "unset/omit의 path 인자가 외부 입력",
+  "source": "https://osv.dev/vulnerability/GHSA-xxjr-mmjv-4gpg"
+ },
+ {
+  "ids": [
+   "GHSA-jf85-cpcp-j695",
+   "CVE-2019-10744"
+  ],
+  "package": "lodash",
+  "condition": "_.defaultsDeep에 constructor payload로 프로토타입 오염",
+  "symbols": [
+   "defaultsDeep"
+  ],
+  "trigger": "defaultsDeep의 원본 객체가 외부 입력",
+  "source": "https://osv.dev/vulnerability/GHSA-jf85-cpcp-j695"
+ },
+ {
+  "ids": [
+   "GHSA-4xc9-xhrj-v574",
+   "CVE-2018-16487"
+  ],
+  "package": "lodash",
+  "condition": "merge·mergeWith·defaultsDeep에서 __proto__ 키로 프로토타입 오염",
+  "symbols": [
+   "merge",
+   "mergeWith",
+   "defaultsDeep"
+  ],
+  "trigger": "병합 원본 객체가 외부 입력(JSON 본문 등)",
+  "source": "https://osv.dev/vulnerability/GHSA-4xc9-xhrj-v574"
+ },
+ {
+  "ids": [
+   "GHSA-fvqr-27wr-82fm",
+   "CVE-2018-3721"
+  ],
+  "package": "lodash",
+  "condition": "merge·mergeWith·defaultsDeep에서 프로토타입 오염",
+  "symbols": [
+   "merge",
+   "mergeWith",
+   "defaultsDeep"
+  ],
+  "trigger": "병합 원본 객체가 외부 입력",
+  "source": "https://osv.dev/vulnerability/GHSA-fvqr-27wr-82fm"
+ },
+ {
+  "ids": [
+   "GHSA-p6mc-m468-83gw",
+   "CVE-2020-8203"
+  ],
+  "package": "lodash",
+  "condition": "zipObjectDeep에서 프로토타입 오염",
+  "symbols": [
+   "zipObjectDeep"
+  ],
+  "trigger": "zipObjectDeep의 경로 인자가 외부 입력",
+  "source": "https://osv.dev/vulnerability/GHSA-p6mc-m468-83gw"
+ },
+ {
+  "ids": [
+   "GHSA-29mw-wpgm-hmr9",
+   "CVE-2020-28500"
+  ],
+  "package": "lodash",
+  "condition": "toNumber·trim·trimEnd 정규식 ReDoS",
+  "symbols": [
+   "toNumber",
+   "trim",
+   "trimEnd"
+  ],
+  "trigger": "긴 공백 문자열 외부 입력",
+  "source": "https://osv.dev/vulnerability/GHSA-29mw-wpgm-hmr9"
+ },
+ {
+  "ids": [
+   "GHSA-vfvf-mqq8-rwqc",
+   "CVE-2016-10531"
+  ],
+  "package": "marked",
+  "condition": "sanitize 옵션을 HTML 엔티티로 우회하는 XSS",
+  "symbols": [],
+  "trigger": "외부 입력 마크다운을 marked()로 렌더링",
+  "source": "https://osv.dev/vulnerability/GHSA-vfvf-mqq8-rwqc",
+  "pattern": "\\b(marked)\\s*\\("
+ },
+ {
+  "ids": [
+   "GHSA-7px7-7xjx-hxm8",
+   "CVE-2017-1000427"
+  ],
+  "package": "marked",
+  "condition": "data URI 링크를 통한 XSS",
+  "symbols": [],
+  "trigger": "외부 입력 마크다운을 marked()로 렌더링",
+  "source": "https://osv.dev/vulnerability/GHSA-7px7-7xjx-hxm8",
+  "pattern": "\\b(marked)\\s*\\("
+ },
+ {
+  "ids": [
+   "GHSA-x5pg-88wf-qq4p",
+   "CVE-2017-16114"
+  ],
+  "package": "marked",
+  "condition": "정규식 ReDoS",
+  "symbols": [],
+  "trigger": "외부 입력 마크다운을 marked()로 렌더링",
+  "source": "https://osv.dev/vulnerability/GHSA-x5pg-88wf-qq4p",
+  "pattern": "\\b(marked)\\s*\\("
+ },
+ {
+  "ids": [
+   "GHSA-rrrm-qjm4-v8hf",
+   "CVE-2022-21680"
+  ],
+  "package": "marked",
+  "condition": "block.def 정규식 ReDoS",
+  "symbols": [],
+  "trigger": "외부 입력 마크다운을 marked()로 렌더링",
+  "source": "https://osv.dev/vulnerability/GHSA-rrrm-qjm4-v8hf",
+  "pattern": "\\b(marked)\\s*\\("
+ },
+ {
+  "ids": [
+   "GHSA-5v2h-r2cx-5xgj",
+   "CVE-2022-21681"
+  ],
+  "package": "marked",
+  "condition": "inline.reflinkSearch 정규식 ReDoS",
+  "symbols": [],
+  "trigger": "외부 입력 마크다운을 marked()로 렌더링",
+  "source": "https://osv.dev/vulnerability/GHSA-5v2h-r2cx-5xgj",
+  "pattern": "\\b(marked)\\s*\\("
+ },
+ {
+  "ids": [
+   "GHSA-8hfj-j24r-96c4",
+   "CVE-2022-24785"
+  ],
+  "package": "moment",
+  "condition": "moment.locale()에 사용자 입력 로캘 문자열을 넣으면 경로 탐색",
+  "symbols": [
+   "locale"
+  ],
+  "trigger": "locale 인자가 외부 입력(서버 측)",
+  "source": "https://osv.dev/vulnerability/GHSA-8hfj-j24r-96c4",
+  "workaround": "locale 인자를 허용 목록으로 검증"
+ },
+ {
+  "ids": [
+   "GHSA-446m-mv8f-q348",
+   "CVE-2017-18214"
+  ],
+  "package": "moment",
+  "condition": "날짜 문자열 파싱 ReDoS",
+  "symbols": [],
+  "trigger": "외부 입력 문자열을 moment()로 파싱",
+  "source": "https://osv.dev/vulnerability/GHSA-446m-mv8f-q348",
+  "pattern": "\\b(moment)\\s*\\("
+ },
+ {
+  "ids": [
+   "GHSA-w9mr-4mfr-499f",
+   "CVE-2017-20162"
+  ],
+  "package": "ms",
+  "condition": "ms() 문자열 파싱 ReDoS",
+  "symbols": [],
+  "trigger": "외부 입력 문자열을 ms()로 파싱",
+  "source": "https://osv.dev/vulnerability/GHSA-w9mr-4mfr-499f",
+  "pattern": "\\b(ms)\\s*\\("
+ },
+ {
+  "ids": [
+   "GHSA-3fx5-fwvr-xrjg",
+   "CVE-2015-8315"
+  ],
+  "package": "ms",
+  "condition": "ms() 문자열 파싱 ReDoS",
+  "symbols": [],
+  "trigger": "외부 입력 문자열을 ms()로 파싱",
+  "source": "https://osv.dev/vulnerability/GHSA-3fx5-fwvr-xrjg",
+  "pattern": "\\b(ms)\\s*\\("
+ },
+ {
+  "ids": [
+   "GHSA-69rr-wvh9-6c4q",
+   "CVE-2014-3744"
+  ],
+  "package": "st",
+  "condition": "st 정적 파일 서빙에서 인코딩된 ../ 경로 탐색",
+  "symbols": [],
+  "trigger": "st 미들웨어가 외부 요청 경로를 서빙",
+  "source": "https://osv.dev/vulnerability/GHSA-69rr-wvh9-6c4q",
+  "pattern": "\\b(st)\\s*\\("
+ },
+ {
+  "ids": [
+   "GHSA-3v6h-hqm4-2rg6",
+   "CVE-2018-1002204"
+  ],
+  "package": "adm-zip",
+  "condition": "zip 항목 이름의 ../로 임의 파일 쓰기(Zip Slip)",
+  "symbols": [
+   "extractAllTo",
+   "extractEntryTo"
+  ],
+  "trigger": "외부에서 받은 zip을 압축 해제",
+  "source": "https://osv.dev/vulnerability/GHSA-3v6h-hqm4-2rg6"
+ },
+ {
+  "ids": [
+   "GHSA-9wcg-jrwf-8gg7",
+   "CVE-2020-7699"
+  ],
+  "package": "express-fileupload",
+  "condition": "parseNested 옵션이 켜져 있을 때 multipart 필드 이름으로 프로토타입 오염",
+  "symbols": [
+   "fileUpload"
+  ],
+  "trigger": "fileUpload({ parseNested: true })",
+  "source": "https://osv.dev/vulnerability/GHSA-9wcg-jrwf-8gg7",
+  "workaround": "parseNested 옵션을 끈다",
+  "config": {
+   "site": "fileUpload\\s*\\(",
+   "required": "parseNested\\s*:\\s*true"
+  }
+ }
+]

@@ -13,3 +13,7 @@ node_modules/
 .env.*
 !.env.example
 .DS_Store
+data/
+
+# Frontend build
+frontend/dist/

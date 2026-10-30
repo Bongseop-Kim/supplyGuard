@@ -1,0 +1,41 @@
+# docker compose up -d db                      → PostgreSQL만 (로컬 개발: SG_DB_URL=postgresql+psycopg://sg:sg@localhost:5433/sg)
+# docker compose up -d                         → db + api(웹 포함, :8000) + worker
+# 저장소를 같은 절대 경로로 마운트한다: worker가 docker.sock으로 띄우는 스캐너 컨테이너에 호스트 경로를 넘기기 때문
+x-app: &app
+  build: ./backend
+  environment:
+    SG_DB_URL: postgresql+psycopg://sg:sg@db/sg
+    SG_DATA: ${PWD}/data
+    OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    PYTHONPATH: ${PWD}/backend
+  working_dir: ${PWD}/backend
+  volumes:
+    - ${PWD}:${PWD}
+    - /var/run/docker.sock:/var/run/docker.sock
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment: { POSTGRES_USER: sg, POSTGRES_PASSWORD: sg, POSTGRES_DB: sg }
+    ports: ["5433:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD", "pg_isready", "-U", "sg"], interval: 2s, retries: 30 }
+  api:
+    <<: *app
+    environment:
+      SG_DB_URL: postgresql+psycopg://sg:sg@db/sg
+      SG_DATA: ${PWD}/data
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      PYTHONPATH: ${PWD}/backend
+      SG_INLINE_WORKER: "0"
+    command: sh -c "alembic upgrade head && python -m supplyguard.cli serve --host 0.0.0.0 --port 8000"
+    ports: ["8000:8000"]
+  worker:
+    <<: *app
+    command: sh -c "sleep 3 && python -m supplyguard.cli worker"
+
+volumes:
+  pgdata:
