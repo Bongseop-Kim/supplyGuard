@@ -1,0 +1,517 @@
+{
+ "experiment": "6.4",
+ "source_run": 3,
+ "findings": 236,
+ "ai": false,
+ "date": "2026-10-30",
+ "summary": {
+  "file": {
+   "scenarios": 24,
+   "missed": 0,
+   "rejudged": 365,
+   "unnecessary": 364,
+   "unnecessary_ratio": 0.997,
+   "reused": 5289
+  },
+  "service": {
+   "scenarios": 24,
+   "missed": 0,
+   "rejudged": 4010,
+   "unnecessary": 4009,
+   "unnecessary_ratio": 1.0,
+   "reused": 1644
+  }
+ },
+ "scenarios": [
+  {
+   "scenario": "S00 변경 없음",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 236,
+   "rejudged": 0,
+   "missed": [],
+   "unnecessary": 0,
+   "changed": []
+  },
+  {
+   "scenario": "S00 변경 없음",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 236,
+   "rejudged": 0,
+   "missed": [],
+   "unnecessary": 0,
+   "changed": []
+  },
+  {
+   "scenario": "S01 README 수정(코드 아님)",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 236,
+   "rejudged": 0,
+   "missed": [],
+   "unnecessary": 0,
+   "changed": []
+  },
+  {
+   "scenario": "S01 README 수정(코드 아님)",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 236,
+   "rejudged": 0,
+   "missed": [],
+   "unnecessary": 0,
+   "changed": []
+  },
+  {
+   "scenario": "S02 app.js 주석 추가",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 214,
+   "rejudged": 22,
+   "missed": [],
+   "unnecessary": 22,
+   "changed": []
+  },
+  {
+   "scenario": "S02 app.js 주석 추가",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S03 ms() 호출 제거",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 185,
+   "rejudged": 51,
+   "missed": [],
+   "unnecessary": 51,
+   "changed": []
+  },
+  {
+   "scenario": "S03 ms() 호출 제거",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S04 _.merge 호출 제거",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 185,
+   "rejudged": 51,
+   "missed": [],
+   "unnecessary": 51,
+   "changed": []
+  },
+  {
+   "scenario": "S04 _.merge 호출 제거",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S05 새 파일에서 _.template 사용",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 234,
+   "rejudged": 2,
+   "missed": [],
+   "unnecessary": 2,
+   "changed": []
+  },
+  {
+   "scenario": "S05 새 파일에서 _.template 사용",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S06 fileUpload parseNested 켜기",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 214,
+   "rejudged": 22,
+   "missed": [],
+   "unnecessary": 21,
+   "changed": [
+    "express-fileupload@0.0.5|GHSA-9wcg-jrwf-8gg7: uncertain→affected"
+   ]
+  },
+  {
+   "scenario": "S06 fileUpload parseNested 켜기",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 235,
+   "changed": [
+    "express-fileupload@0.0.5|GHSA-9wcg-jrwf-8gg7: uncertain→affected"
+   ]
+  },
+  {
+   "scenario": "S07 st 미들웨어 제거",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 214,
+   "rejudged": 22,
+   "missed": [],
+   "unnecessary": 22,
+   "changed": []
+  },
+  {
+   "scenario": "S07 st 미들웨어 제거",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S08 views에서 marked 제거",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 228,
+   "rejudged": 8,
+   "missed": [],
+   "unnecessary": 8,
+   "changed": []
+  },
+  {
+   "scenario": "S08 views에서 marked 제거",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S09 moment.locale 새 사용",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 234,
+   "rejudged": 2,
+   "missed": [],
+   "unnecessary": 2,
+   "changed": []
+  },
+  {
+   "scenario": "S09 moment.locale 새 사용",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S10 서버 코드에서 jquery import",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 234,
+   "rejudged": 2,
+   "missed": [],
+   "unnecessary": 2,
+   "changed": []
+  },
+  {
+   "scenario": "S10 서버 코드에서 jquery import",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S11 routes/users.js 삭제",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 227,
+   "rejudged": 9,
+   "missed": [],
+   "unnecessary": 9,
+   "changed": []
+  },
+  {
+   "scenario": "S11 routes/users.js 삭제",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S12 lockfile st 0.2.5",
+   "granularity": "file",
+   "verdicts": 234,
+   "reused": 232,
+   "rejudged": 2,
+   "missed": [],
+   "unnecessary": 2,
+   "changed": []
+  },
+  {
+   "scenario": "S12 lockfile st 0.2.5",
+   "granularity": "service",
+   "verdicts": 234,
+   "reused": 0,
+   "rejudged": 234,
+   "missed": [],
+   "unnecessary": 234,
+   "changed": []
+  },
+  {
+   "scenario": "S13 lockfile marked 0.3.9",
+   "granularity": "file",
+   "verdicts": 230,
+   "reused": 228,
+   "rejudged": 2,
+   "missed": [],
+   "unnecessary": 2,
+   "changed": []
+  },
+  {
+   "scenario": "S13 lockfile marked 0.3.9",
+   "granularity": "service",
+   "verdicts": 230,
+   "reused": 0,
+   "rejudged": 230,
+   "missed": [],
+   "unnecessary": 230,
+   "changed": []
+  },
+  {
+   "scenario": "S14 권고 modified 갱신(marked)",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 235,
+   "rejudged": 1,
+   "missed": [],
+   "unnecessary": 1,
+   "changed": []
+  },
+  {
+   "scenario": "S14 권고 modified 갱신(marked)",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 235,
+   "rejudged": 1,
+   "missed": [],
+   "unnecessary": 1,
+   "changed": []
+  },
+  {
+   "scenario": "S15 KEV 신규 등재(lodash defaultsDeep)",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 234,
+   "rejudged": 2,
+   "missed": [],
+   "unnecessary": 2,
+   "changed": []
+  },
+  {
+   "scenario": "S15 KEV 신규 등재(lodash defaultsDeep)",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 234,
+   "rejudged": 2,
+   "missed": [],
+   "unnecessary": 2,
+   "changed": []
+  },
+  {
+   "scenario": "S16 EPSS 임계 초과(express-fileupload)",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 235,
+   "rejudged": 1,
+   "missed": [],
+   "unnecessary": 1,
+   "changed": []
+  },
+  {
+   "scenario": "S16 EPSS 임계 초과(express-fileupload)",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 235,
+   "rejudged": 1,
+   "missed": [],
+   "unnecessary": 1,
+   "changed": []
+  },
+  {
+   "scenario": "S17 무관한 줄 수정(routes/index.js)",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 185,
+   "rejudged": 51,
+   "missed": [],
+   "unnecessary": 51,
+   "changed": []
+  },
+  {
+   "scenario": "S17 무관한 줄 수정(routes/index.js)",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S18 ms() 제거 + st 0.2.5 + 권고 수정",
+   "granularity": "file",
+   "verdicts": 234,
+   "reused": 182,
+   "rejudged": 52,
+   "missed": [],
+   "unnecessary": 52,
+   "changed": []
+  },
+  {
+   "scenario": "S18 ms() 제거 + st 0.2.5 + 권고 수정",
+   "granularity": "service",
+   "verdicts": 234,
+   "reused": 0,
+   "rejudged": 234,
+   "missed": [],
+   "unnecessary": 234,
+   "changed": []
+  },
+  {
+   "scenario": "S19 adm-zip extractAllTo 제거",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 185,
+   "rejudged": 51,
+   "missed": [],
+   "unnecessary": 51,
+   "changed": []
+  },
+  {
+   "scenario": "S19 adm-zip extractAllTo 제거",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S20 새 파일에서 _.merge 사용",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 234,
+   "rejudged": 2,
+   "missed": [],
+   "unnecessary": 2,
+   "changed": []
+  },
+  {
+   "scenario": "S20 새 파일에서 _.merge 사용",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S21 package.json build 스크립트 제거",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 230,
+   "rejudged": 6,
+   "missed": [],
+   "unnecessary": 6,
+   "changed": []
+  },
+  {
+   "scenario": "S21 package.json build 스크립트 제거",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 0,
+   "rejudged": 236,
+   "missed": [],
+   "unnecessary": 236,
+   "changed": []
+  },
+  {
+   "scenario": "S22 조건 카드 변경(lodash merge)",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 233,
+   "rejudged": 3,
+   "missed": [],
+   "unnecessary": 3,
+   "changed": []
+  },
+  {
+   "scenario": "S22 조건 카드 변경(lodash merge)",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 233,
+   "rejudged": 3,
+   "missed": [],
+   "unnecessary": 3,
+   "changed": []
+  },
+  {
+   "scenario": "S23 예외 만료(st)",
+   "granularity": "file",
+   "verdicts": 236,
+   "reused": 235,
+   "rejudged": 1,
+   "missed": [],
+   "unnecessary": 1,
+   "changed": [],
+   "rejudged_keys": [
+    "a-mall-web|st@0.2.4|GHSA-69rr-wvh9-6c4q"
+   ]
+  },
+  {
+   "scenario": "S23 예외 만료(st)",
+   "granularity": "service",
+   "verdicts": 236,
+   "reused": 235,
+   "rejudged": 1,
+   "missed": [],
+   "unnecessary": 1,
+   "changed": [],
+   "rejudged_keys": [
+    "a-mall-web|st@0.2.4|GHSA-69rr-wvh9-6c4q"
+   ]
+  }
+ ]
+}

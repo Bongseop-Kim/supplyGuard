@@ -1,0 +1,344 @@
+{
+ "note": "요청 → 기대 조건(필수 노드 타입·트리거·파라미터·티켓 승인 게이트·금지 노드). 마지막 요청은 카탈로그 밖 요청 — 작성기가 카탈로그 노드만으로 응답해야 함",
+ "requests": [
+  {
+   "request": "fixtures/repos/goof 저장소를 스캔해서 취약점 판정까지만 해줘",
+   "expect": {
+    "node_types": [
+     "input.repo",
+     "sbom.syft",
+     "scan.grype",
+     "enrich.feeds",
+     "judge.exploitability"
+    ],
+    "trigger": "manual",
+    "params": {},
+    "ticket_gated": null,
+    "forbid_types": [
+     "output.ticket"
+    ]
+   }
+  },
+  {
+   "request": "goof 저장소를 Grype와 OSV-Scanner 둘 다로 스캔하고 결과를 합쳐서 보강해줘",
+   "expect": {
+    "node_types": [
+     "input.repo",
+     "sbom.syft",
+     "scan.grype",
+     "scan.osv",
+     "scan.merge",
+     "enrich.feeds"
+    ],
+    "trigger": "manual",
+    "params": {},
+    "ticket_gated": null,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "계열사 A의 npm 서비스 전부 스캔해서 KEV 해당 건만 담당자별로 정리",
+   "expect": {
+    "node_types": [
+     "input.services",
+     "sbom.syft",
+     "enrich.feeds",
+     "judge.priority",
+     "action.plan"
+    ],
+    "trigger": "manual",
+    "params": {
+     "input.services.company": "A"
+    },
+    "ticket_gated": null,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "매일 새벽 3시에 goof 저장소 스캔하고 우선순위 매겨서 담당자 티켓까지 보내줘(발송 전 승인)",
+   "expect": {
+    "node_types": [
+     "input.repo",
+     "sbom.syft",
+     "scan.grype",
+     "enrich.feeds",
+     "judge.exploitability",
+     "judge.priority",
+     "action.plan",
+     "control.approval",
+     "output.ticket"
+    ],
+    "trigger": "schedule",
+    "params": {},
+    "ticket_gated": true,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "새 KEV가 올라오면 그룹 전체 영향 서비스를 찾고 조치안 만들어서 승인 후 티켓 발송",
+   "expect": {
+    "node_types": [
+     "input.event",
+     "judge.impact",
+     "judge.exploitability",
+     "judge.priority",
+     "action.plan",
+     "control.approval",
+     "output.ticket"
+    ],
+    "trigger": "event",
+    "params": {},
+    "ticket_gated": true,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "CVE-2020-11023이 우리 그룹 어디에 영향 있는지만 알려줘",
+   "expect": {
+    "node_types": [
+     "input.event",
+     "judge.impact"
+    ],
+    "trigger": "manual",
+    "params": {
+     "input.event.key": "CVE-2020-11023"
+    },
+    "ticket_gated": null,
+    "forbid_types": [
+     "output.ticket"
+    ]
+   }
+  },
+  {
+   "request": "trivy-action을 가변 태그로 쓰는 서비스를 찾아줘",
+   "expect": {
+    "node_types": [
+     "judge.impact"
+    ],
+    "trigger": "manual",
+    "params": {
+     "judge.impact.action": "aquasecurity/trivy-action"
+    },
+    "ticket_gated": null,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "2026-03-19부터 3월 20일 사이에 trivy-action을 돌린 서비스만 찾아줘",
+   "expect": {
+    "node_types": [
+     "judge.impact"
+    ],
+    "trigger": "manual",
+    "params": {
+     "judge.impact.action": "aquasecurity/trivy-action"
+    },
+    "ticket_gated": null,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "goof 저장소 판정 결과로 OpenVEX 문서 만들어줘",
+   "expect": {
+    "node_types": [
+     "input.repo",
+     "sbom.syft",
+     "scan.grype",
+     "enrich.feeds",
+     "judge.exploitability",
+     "output.vex"
+    ],
+    "trigger": "manual",
+    "params": {},
+    "ticket_gated": null,
+    "forbid_types": [
+     "output.ticket"
+    ]
+   }
+  },
+  {
+   "request": "외부에서 받은 grype 결과 파일 data/import/grype.json을 읽어서 보강하고 우선순위만 매겨줘",
+   "expect": {
+    "node_types": [
+     "input.findings_import",
+     "enrich.feeds",
+     "judge.priority"
+    ],
+    "trigger": "manual",
+    "params": {
+     "input.findings_import.format": "grype"
+    },
+    "ticket_gated": null,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "CycloneDX SBOM 파일 fixtures/sbom.cdx.json으로 OSV 스캔 돌려줘",
+   "expect": {
+    "node_types": [
+     "input.sbom_import",
+     "scan.osv"
+    ],
+    "trigger": "manual",
+    "params": {},
+    "ticket_gated": null,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "계열사 B 서비스들 스캔해서 판정·우선순위·조치안까지, 티켓은 보내지 마",
+   "expect": {
+    "node_types": [
+     "input.services",
+     "sbom.syft",
+     "enrich.feeds",
+     "judge.exploitability",
+     "judge.priority",
+     "action.plan"
+    ],
+    "trigger": "manual",
+    "params": {
+     "input.services.company": "B"
+    },
+    "ticket_gated": null,
+    "forbid_types": [
+     "output.ticket"
+    ]
+   }
+  },
+  {
+   "request": "악성 패키지(MAL) 이벤트가 생기면 영향 서비스 찾아서 조치안 만들어",
+   "expect": {
+    "node_types": [
+     "input.event",
+     "judge.impact",
+     "action.plan"
+    ],
+    "trigger": "event",
+    "params": {},
+    "ticket_gated": null,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "goof 스캔하는데 악용 가능성 판정 상한을 0.9, 하한을 0.1로 해줘",
+   "expect": {
+    "node_types": [
+     "input.repo",
+     "sbom.syft",
+     "scan.grype",
+     "enrich.feeds",
+     "judge.exploitability"
+    ],
+    "trigger": "manual",
+    "params": {
+     "judge.exploitability.upper": 0.9,
+     "judge.exploitability.lower": 0.1
+    },
+    "ticket_gated": null,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "goof 스캔 후 EPSS 임계값 0.05로 우선순위 매겨줘",
+   "expect": {
+    "node_types": [
+     "input.repo",
+     "sbom.syft",
+     "scan.grype",
+     "enrich.feeds",
+     "judge.exploitability",
+     "judge.priority"
+    ],
+    "trigger": "manual",
+    "params": {
+     "judge.priority.epss_threshold": 0.05
+    },
+    "ticket_gated": null,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "goof 저장소를 OSV-Scanner로만 스캔하고 보강해줘",
+   "expect": {
+    "node_types": [
+     "input.repo",
+     "sbom.syft",
+     "scan.osv",
+     "enrich.feeds"
+    ],
+    "trigger": "manual",
+    "params": {},
+    "ticket_gated": null,
+    "forbid_types": [
+     "scan.grype"
+    ]
+   }
+  },
+  {
+   "request": "전체 서비스 스캔해서 조치안 만들고 승인받은 뒤 티켓 보내",
+   "expect": {
+    "node_types": [
+     "input.services",
+     "sbom.syft",
+     "enrich.feeds",
+     "judge.exploitability",
+     "judge.priority",
+     "action.plan",
+     "control.approval",
+     "output.ticket"
+    ],
+    "trigger": "manual",
+    "params": {},
+    "ticket_gated": true,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "CVE-2021-23337 영향 서비스 찾아서 악용 가능성 판정까지",
+   "expect": {
+    "node_types": [
+     "input.event",
+     "judge.impact",
+     "judge.exploitability"
+    ],
+    "trigger": "manual",
+    "params": {
+     "input.event.key": "CVE-2021-23337"
+    },
+    "ticket_gated": null,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "goof 저장소 스캔 결과에서 조치 대상만 담당자별로 묶어줘(판정 재사용 끄고)",
+   "expect": {
+    "node_types": [
+     "input.repo",
+     "sbom.syft",
+     "scan.grype",
+     "enrich.feeds",
+     "judge.exploitability",
+     "judge.priority",
+     "action.plan"
+    ],
+    "trigger": "manual",
+    "params": {
+     "judge.exploitability.reuse": false
+    },
+    "ticket_gated": null,
+    "forbid_types": []
+   }
+  },
+  {
+   "request": "셸 명령으로 npm audit 돌리는 노드 추가해줘",
+   "expect": {
+    "node_types": [],
+    "trigger": "manual",
+    "params": {},
+    "ticket_gated": null,
+    "forbid_types": []
+   }
+  }
+ ]
+}

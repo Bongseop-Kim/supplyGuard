@@ -1,0 +1,355 @@
+{
+ "experiment": "6.2",
+ "snapshot": "20261030T055042Z",
+ "date": "2026-10-30",
+ "summary": {
+  "A": {
+   "recall_min": 1.0,
+   "recall_avg": 1.0,
+   "precision_avg": 1.0,
+   "ms_avg": 55.1
+  },
+  "B": {
+   "recall_min": 1.0,
+   "recall_avg": 1.0,
+   "precision_avg": 0.826,
+   "ms_avg": 0.4
+  },
+  "C": "미실행: OPENAI_API_KEY 없음"
+ },
+ "cases": [
+  {
+   "scenario": "jquery CVE-2020-11023 (KEV, <3.5.0)",
+   "truth": [
+    "a-mall-admin",
+    "a-mall-web",
+    "b-card-portal",
+    "c-plant-monitor",
+    "d-booking-web",
+    "d-loyalty"
+   ],
+   "A": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 648.4,
+    "missed": [],
+    "extra": []
+   },
+   "B": {
+    "recall": 1.0,
+    "precision": 0.75,
+    "ms": 1.0,
+    "missed": [],
+    "extra": [
+     "b-pay-gateway",
+     "c-esg-site"
+    ]
+   }
+  },
+  {
+   "scenario": "jquery CVE-2019-11358 (<3.4.0)",
+   "truth": [
+    "a-mall-web",
+    "b-card-portal",
+    "c-plant-monitor",
+    "d-loyalty"
+   ],
+   "A": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 1.1,
+    "missed": [],
+    "extra": []
+   },
+   "B": {
+    "recall": 1.0,
+    "precision": 0.5,
+    "ms": 0.4,
+    "missed": [],
+    "extra": [
+     "a-mall-admin",
+     "b-pay-gateway",
+     "c-esg-site",
+     "d-booking-web"
+    ]
+   }
+  },
+  {
+   "scenario": "lodash CVE-2021-23337 (<4.17.21)",
+   "truth": [
+    "a-mall-admin",
+    "a-mall-web",
+    "b-card-portal",
+    "b-pay-gateway",
+    "b-settlement-batch",
+    "c-plant-monitor",
+    "d-booking-web",
+    "d-loyalty",
+    "e-ci-platform",
+    "e-devportal"
+   ],
+   "A": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 1.9,
+    "missed": [],
+    "extra": []
+   },
+   "B": {
+    "recall": 1.0,
+    "precision": 0.833,
+    "ms": 0.4,
+    "missed": [],
+    "extra": [
+     "a-logistics-api",
+     "c-esg-site"
+    ]
+   }
+  },
+  {
+   "scenario": "lodash CVE-2020-8203 (<4.17.19)",
+   "truth": [
+    "a-mall-admin",
+    "a-mall-web",
+    "b-card-portal",
+    "b-settlement-batch",
+    "c-plant-monitor",
+    "d-booking-web",
+    "d-loyalty",
+    "e-ci-platform",
+    "e-devportal"
+   ],
+   "A": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 2.6,
+    "missed": [],
+    "extra": []
+   },
+   "B": {
+    "recall": 1.0,
+    "precision": 0.75,
+    "ms": 0.4,
+    "missed": [],
+    "extra": [
+     "a-logistics-api",
+     "b-pay-gateway",
+     "c-esg-site"
+    ]
+   }
+  },
+  {
+   "scenario": "moment CVE-2022-24785 (<2.29.2)",
+   "truth": [
+    "a-logistics-api",
+    "a-mall-admin",
+    "a-mall-web",
+    "b-card-portal",
+    "b-pay-gateway",
+    "c-esg-site",
+    "c-plant-monitor",
+    "d-booking-web",
+    "d-loyalty",
+    "e-ci-platform",
+    "e-devportal"
+   ],
+   "A": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 0.8,
+    "missed": [],
+    "extra": []
+   },
+   "B": {
+    "recall": 1.0,
+    "precision": 0.917,
+    "ms": 0.3,
+    "missed": [],
+    "extra": [
+     "b-settlement-batch"
+    ]
+   }
+  },
+  {
+   "scenario": "moment CVE-2017-18214 (<2.19.3)",
+   "truth": [
+    "a-logistics-api",
+    "a-mall-admin",
+    "a-mall-web",
+    "b-card-portal",
+    "b-pay-gateway",
+    "c-esg-site",
+    "c-plant-monitor",
+    "d-booking-web",
+    "d-loyalty",
+    "e-ci-platform",
+    "e-devportal"
+   ],
+   "A": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 0.7,
+    "missed": [],
+    "extra": []
+   },
+   "B": {
+    "recall": 1.0,
+    "precision": 0.917,
+    "ms": 0.3,
+    "missed": [],
+    "extra": [
+     "b-settlement-batch"
+    ]
+   }
+  },
+  {
+   "scenario": "marked CVE-2017-1000427 (0.3.5 사용처)",
+   "truth": [
+    "a-mall-admin",
+    "a-mall-web",
+    "b-card-portal",
+    "b-pay-gateway",
+    "b-settlement-batch",
+    "c-esg-site",
+    "c-plant-monitor",
+    "d-booking-web",
+    "d-loyalty",
+    "e-ci-platform",
+    "e-devportal"
+   ],
+   "A": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 0.7,
+    "missed": [],
+    "extra": []
+   },
+   "B": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 0.3,
+    "missed": [],
+    "extra": []
+   }
+  },
+  {
+   "scenario": "eslint-config-prettier 악성 버전 CVE-2025-54313",
+   "truth": [
+    "d-booking-web"
+   ],
+   "A": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 2.4,
+    "missed": [],
+    "extra": []
+   },
+   "B": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 0.3,
+    "missed": [],
+    "extra": []
+   }
+  },
+  {
+   "scenario": "vite CVE-2025-31125 (KEV)",
+   "truth": [
+    "e-devportal"
+   ],
+   "A": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 0.6,
+    "missed": [],
+    "extra": []
+   },
+   "B": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 0.3,
+    "missed": [],
+    "extra": []
+   }
+  },
+  {
+   "scenario": "express CVE-2024-29041 (<4.19.2)",
+   "truth": [
+    "a-logistics-api",
+    "a-mall-admin",
+    "a-mall-web",
+    "b-card-portal",
+    "b-pay-gateway",
+    "b-settlement-batch",
+    "c-esg-site",
+    "c-plant-monitor",
+    "d-booking-web",
+    "d-loyalty",
+    "e-ci-platform",
+    "e-devportal"
+   ],
+   "A": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 0.7,
+    "missed": [],
+    "extra": []
+   },
+   "B": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 0.3,
+    "missed": [],
+    "extra": []
+   }
+  },
+  {
+   "scenario": "Trivy형: trivy-action 가변 참조",
+   "truth": [
+    "b-card-portal",
+    "b-settlement-batch",
+    "e-ci-platform"
+   ],
+   "A": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 0.7,
+    "missed": [],
+    "extra": []
+   },
+   "B": {
+    "recall": 1.0,
+    "precision": 0.75,
+    "ms": 0.5,
+    "missed": [],
+    "extra": [
+     "b-pay-gateway"
+    ]
+   }
+  },
+  {
+   "scenario": "Trivy형: 가변 참조 + 2026-03-19~20 실행",
+   "truth": [
+    "b-card-portal",
+    "e-ci-platform"
+   ],
+   "A": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "ms": 0.6,
+    "missed": [],
+    "extra": []
+   },
+   "B": {
+    "recall": 1.0,
+    "precision": 0.5,
+    "ms": 0.2,
+    "missed": [],
+    "extra": [
+     "b-pay-gateway",
+     "b-settlement-batch"
+    ]
+   }
+  }
+ ]
+}
