@@ -168,9 +168,18 @@ def execute(run_id: int) -> str:
                     if dn == n:
                         sn, sp = _split(e.src)
                         inputs.setdefault(dp, []).extend(done[sn].outputs.get(sp, []))
-                nr = NodeRun(run_id=run_id, node_id=n, type=spec.type, version=spec.version, kind=spec.kind, status="running",
-                             params=nodes[n].params, inputs=inputs, started_at=utcnow())
+                key = _cache_key(spec, nodes[n].params, inputs, run) if _cacheable(spec, run) else None
+                hit = key and db.scalar(select(NodeRun).where(NodeRun.cache_key == key, NodeRun.status == "succeeded").order_by(NodeRun.id.desc()).limit(1))
                 db.query(NodeRun).filter(NodeRun.run_id == run_id, NodeRun.node_id == n).delete()
+                if hit:  # 노드 캐시: 같은 노드·파라미터·입력·스냅샷이면 다시 돌리지 않는다
+                    done[n] = NodeRun(run_id=run_id, node_id=n, type=spec.type, version=spec.version, kind=spec.kind, status="succeeded",
+                                      params=nodes[n].params, inputs=inputs, outputs=hit.outputs, tools=hit.tools, reused_from=hit.id, cache_key=key,
+                                      started_at=utcnow(), finished_at=utcnow())
+                    db.add(done[n])
+                    db.commit()
+                    continue
+                nr = NodeRun(run_id=run_id, node_id=n, type=spec.type, version=spec.version, kind=spec.kind, status="running",
+                             params=nodes[n].params, inputs=inputs, started_at=utcnow(), cache_key=key)
                 db.add(nr)
                 db.commit()
                 approver = next((a.approver for a in approvals.values() if a.decision == "approved" and a.node_id in preds[n]), None)
@@ -204,6 +213,17 @@ def execute(run_id: int) -> str:
         ingest.ingest(db, run_id)
     db.close()
     return run.status
+
+
+def _cacheable(spec, run) -> bool:
+    # ponytail: 입력 노드(파일시스템을 읽음)·LLM·부작용·제어 노드와 재현성 검사(replay)는 캐시하지 않는다.
+    # 컨테이너 노드의 키는 Repo 산출물(lockfile·앱 코드 해시) 기준이라, 그 밖의 매니페스트(go.mod 등)만 바뀌면 오래된 결과가 나올 수 있다
+    return spec.kind in ("container", "deterministic") and not spec.type.startswith("input.") and not spec.side_effect \
+        and not run.trigger.get("replay_of") and not run.trigger.get("no_cache")
+
+
+def _cache_key(spec, params, inputs, run) -> str:
+    return digest({"type": spec.type, "version": spec.version, "params": params, "inputs": inputs, "snapshot": run.snapshot_id})
 
 
 def _parent_node(db, run_id, node_id):

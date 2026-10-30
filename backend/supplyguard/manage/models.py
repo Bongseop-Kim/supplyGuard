@@ -124,7 +124,8 @@ class NodeRun(Base):
     inputs: Mapped[dict] = mapped_column(default=dict)  # 포트 → [산출물 해시]
     outputs: Mapped[dict] = mapped_column(default=dict)
     tools: Mapped[list] = mapped_column(default=list)  # 도구 버전·digest·DB 스냅샷·LLM 전송 기록
-    reused_from: Mapped[int | None]  # 이전 실행에서 가져온 노드 결과(실패 노드 이후만 재실행)
+    reused_from: Mapped[int | None]  # 이전 실행에서 가져온 노드 결과(실패 노드 이후만 재실행·캐시)
+    cache_key: Mapped[str | None] = mapped_column(String(64), index=True)
     error: Mapped[str | None] = mapped_column(Text)
     started_at: Mapped[datetime | None]
     finished_at: Mapped[datetime | None]

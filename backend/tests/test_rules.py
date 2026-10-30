@@ -190,3 +190,14 @@ def test_normalizers_merge_grype_and_osv():
 def test_semver_selftest():
     import runpy
     runpy.run_path(str(Path(judge.__file__).parents[1] / "knowledge/semver.py"), run_name="__main__")
+
+
+def test_filter_node_splits_by_kev_and_priority():
+    from supplyguard.artifacts import Priority
+    from supplyguard.nodes import control
+    a, b = ef(vuln_id="A", kev={"cveID": "CVE-1"}), ef(vuln_id="B")
+    pr = [Priority(finding_key=a.key, decision="Attend", due_days=14, inputs={}), Priority(finding_key=b.key, decision="Act", due_days=3, inputs={})]
+    out = control.filter_(None, {"enriched": [a, b]}, control.FilterParams(kev_only=True))
+    assert [e.vuln_id for e in out["matched"]] == ["A"] and [e.vuln_id for e in out["rest"]] == ["B"]
+    out = control.filter_(None, {"enriched": [a, b], "priorities": pr}, control.FilterParams(min_priority="Act"))
+    assert [e.vuln_id for e in out["matched"]] == ["B"]

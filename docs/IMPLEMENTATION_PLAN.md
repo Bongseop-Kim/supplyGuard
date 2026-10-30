@@ -192,7 +192,7 @@ UI(M4)와 판단 노드(M2)는 산출물 스키마(M0)와 그래프 스키마(M1
 | M4 UI | 진행 중 | 브라우저에서 S1 캔버스 → 실행 → 근거 열람 |
 | M5 AI 에이전트 | 구현, 실측 전 | 작성기 검사기 루프는 가짜 응답 테스트 통과. 실제 호출은 OPENAI_API_KEY 필요 |
 | M6 평가 | 6.2·6.4 완료, 6.1 부분, 6.3 미실행 | [eval/README.md](../eval/README.md) |
-| M7 확장 | 일부 | 노드 캐시 대신 재실행 시 성공 노드 재사용, 예외·추이·증빙 export·발송함 구현. 나머지 미착수 |
+| M7 확장 | 일부 | 완료: 노드 캐시(같은 노드·파라미터·입력·스냅샷이면 재사용, S1 재실행 2.3초), 조건 분기(control.filter), 예외·추이·증빙 export·발송함. 미착수: cdxgen·Trivy 노드, Vulnrichment, PR 초안, 티켓 연동, 판정 이력 RAG(6.5), 인젝션 실험, MCP. SARIF import는 픽스처 SARIF가 SAST 결과라 패키지 취약점으로 정규화할 대상이 없어 보류 |
 
 M1 미확인 항목 확인 결과(2026-10-30, 실제 실행):
 - Grype v0.121.0 `-o json`: `matches[].vulnerability{id,severity,cvss[],fix.versions}`, `relatedVulnerabilities[].id`, `artifact{name,version,purl,locations}`, `descriptor.db.status{schemaVersion,built}`. `cvss`·`fix`·`locations`는 null일 수 있다.
