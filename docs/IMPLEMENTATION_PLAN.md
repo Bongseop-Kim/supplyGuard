@@ -188,11 +188,11 @@ UI(M4)와 판단 노드(M2)는 산출물 스키마(M0)와 그래프 스키마(M1
 | M0 기반 | 완료 | `uv run pytest` 통과, `docker compose up -d db` + `alembic upgrade head` 후 PostgreSQL에서 S1·S2·관리 API 동작 |
 | M1 진단 환경 코어 | 완료 | `sg run fixtures/graphs/s1-scan.json`: 저장소 → Syft → Grype·OSV-Scanner(`--network none`) → 병합 → 보강. `sg replay <run>`에서 결정론·컨테이너 노드 산출물 해시 10/10 일치 |
 | M2 판단 노드 | 완료(AI 경로는 키 필요) | S1 전체와 S2(`sg event kev CVE-2020-11023`). 판정마다 근거 file:line·출처(KEV·EPSS·OSV 레코드, 스냅샷) |
-| M3 관리 계층 | 완료 | `eval/s4_rescan.py`: "235건 중 182건 재사용, 53건 재판정(근거 파일 변경 49·코드 변경 3·권고 수정 1)", 사람 확정 판정 보존 |
-| M4 UI | 진행 중 | 브라우저에서 S1 캔버스 → 실행 → 근거 열람 |
+| M3 관리 계층 | 완료 | `eval/s4_rescan.py`: "235건 중 182건 재사용, 52건 재판정(근거 파일 변경 49·코드 변경 2·권고 수정 1)", 사람 확정 판정 보존 |
+| M4 UI | 완료 | `frontend/`: 캔버스(포트 타입 불일치 연결 거부)·실행 뷰(승인 폼·판정 근거)·관리 8개 탭·질문. 헤드리스 Chromium으로 1440px·360px 15개 화면 콘솔 오류 없음 확인. 저장·실행·승인 버튼의 끝까지 동작은 수동 확인 전 |
 | M5 AI 에이전트 | 구현, 실측 전 | 작성기 검사기 루프는 가짜 응답 테스트 통과. 실제 호출은 OPENAI_API_KEY 필요 |
 | M6 평가 | 6.2·6.4 완료, 6.1 부분, 6.3 미실행 | [eval/README.md](../eval/README.md) |
-| M7 확장 | 일부 | 완료: 노드 캐시(같은 노드·파라미터·입력·스냅샷이면 재사용, S1 재실행 2.3초), 조건 분기(control.filter), 예외·추이·증빙 export·발송함. 미착수: cdxgen·Trivy 노드, Vulnrichment, PR 초안, 티켓 연동, 판정 이력 RAG(6.5), 인젝션 실험, MCP. SARIF import는 픽스처 SARIF가 SAST 결과라 패키지 취약점으로 정규화할 대상이 없어 보류 |
+| M7 확장 | 일부 | 완료: 노드 캐시(같은 노드·파라미터·입력·스냅샷이면 재사용, S1 재실행 2.3초), 조건 분기(control.filter), 예외·추이·증빙 export·발송함. 완료: Trivy 노드(digest 고정, `sg sync --only trivy`로 오프라인 DB). 미착수: cdxgen 노드, Vulnrichment, PR 초안, 티켓 연동, 판정 이력 RAG(6.5), 인젝션 실험, MCP. SARIF import는 픽스처 SARIF가 SAST 결과라 패키지 취약점으로 정규화할 대상이 없어 보류 |
 
 M1 미확인 항목 확인 결과(2026-10-30, 실제 실행):
 - Grype v0.121.0 `-o json`: `matches[].vulnerability{id,severity,cvss[],fix.versions}`, `relatedVulnerabilities[].id`, `artifact{name,version,purl,locations}`, `descriptor.db.status{schemaVersion,built}`. `cvss`·`fix`·`locations`는 null일 수 있다.
