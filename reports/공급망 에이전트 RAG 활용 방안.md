@@ -33,7 +33,7 @@
 
 이 표에서 벡터 색인이 주 역할을 하는 것은 셋째와 마지막 행뿐이다. 그래프 계열에서는 **[학술]** PNNL CyRAG/GraphCyRAG, CyKG-RAG, CTI-Thinker 등이 CVE–CWE–CAPEC–ATT&CK를 Neo4j형 그래프로 묶어 RAG에 쓴다 ([PNNL](https://www.pnnl.gov/publications/retrieval-augmented-generation-robust-cyber-defense), [CEUR-WS Vol-3950](https://ceur-ws.org/Vol-3950/paper1.pdf), [Crossref CTI-Thinker](https://api.crossref.org/works/10.1186%2FS42400-025-00505-Y)). 그러나 이 연구들은 설명력 향상을 주장할 뿐, 벡터 RAG와 엄밀하게 비교하지 않았다. **[제안]** 이 과제에서 쓸모 있는 "그래프"는 LLM이 추출한 엔터티 그래프(Microsoft식 GraphRAG)가 아니라 **사내 의존성 그래프**(purl → 아티팩트 → 서비스 → 시스템 → 계열사 → 담당자)다. 이는 결정론적으로 질의할 수 있는 평범한 그래프·관계형 데이터다.
 
-신선도 설계도 이 분류를 따른다. **[제안]** 정형 원천은 KEV JSON의 `dateAdded` diff, OSV `modified_id.csv` 증분(MAL 항목, 철회, 회수 포함), EPSS 일일 파일, Vulnrichment git pull로 매일 또는 매시간 동기화한다. 재임베딩은 바뀐 권고·Notes·패치 텍스트에 대해서만 한다. 모든 레코드에 `source`, `modified`, `fetched_at`을 저장해 에이전트 출력이 근거의 시점을 인용하게 한다. 철회된 레코드는 지우지 않고 "삭제 표시(tombstone)"로 남긴다. 신규 KEV·MAL 레코드가 들어오면 이벤트로 SBOM 조인을 트리거한다.
+신선도 설계도 이 분류를 따른다. **[제안]** 정형 원천은 KEV JSON의 CVE ID별 전체 레코드 diff(`dateAdded`뿐 아니라 `knownRansomwareCampaignUse`·`notes`·`requiredAction`·`dueDate` 변경도 색인 반영), OSV `modified_id.csv` 증분(MAL 항목, 철회, 회수 포함), EPSS 일일 파일, Vulnrichment git pull로 매일 또는 매시간 동기화한다. 재임베딩은 바뀐 권고·Notes·패치 텍스트에 대해서만 한다. 모든 레코드에 `source`, `modified`, `fetched_at`을 저장해 에이전트 출력이 근거의 시점을 인용하게 한다. 철회된 레코드는 지우지 않고 "삭제 표시(tombstone)"로 남긴다. 신규 KEV·MAL 레코드가 들어오면 이벤트로 SBOM 조인을 트리거한다.
 
 ## 도달성 판정의 정확도는 설명문이 아니라 패치 지식과 코드 검색에서 나온다
 
@@ -99,7 +99,7 @@ LLM은 영향 목록이 확정된 다음 단계에서 가치를 낸다. 서비�
 |---|---|---|---|---|
 | ① 위협 사실 DB (SQLite/Postgres) | KEV, EPSS, Vulnrichment SSVC, OSV/GHSA 영향 범위, MAL, CWE↔CAPEC↔ATT&CK 엣지 | `lookup_vuln(id)`, `lookup_purl(purl, ver)`, `kev_since(date)` 정확 조회 | 일/시간 증분, tombstone | T1 |
 | ② 취약 조건 지식 카드 (하이브리드 BM25+벡터) | 취약점별 카드: 수정 커밋·변경 함수·트리거 조건(설정·입력)·공개 진입 API·PoC/Nuclei 매처 요약, 원문 링크·라인 범위 | `get_card(id)` 정확 조회 우선, 카드 없으면 `search_similar_conditions(text)` | 신규·변경 권고만 재생성 | T1(카드 생성은 도구 없는 격리 호출) |
-| ③ 대상 코드 (색인 없음) | 저장소 소스, 설정, lockfile, CI 워크플로우 | `grep_symbol`, `find_references`(LSP), `callers_of`/호출 그래프, `read_file_range`, `list_config` | 실행 시점 커밋 SHA 고정 | T0(읽기 전용) |
+| ③ 대상 코드 (색인 없음) | 저장소 소스, 설정, lockfile, CI 워크플로우 | `grep_symbol`, `find_references`(LSP), `callers_of`/호출 그래프, `read_file_range`, `list_config` | 실행 시점 커밋 SHA 고정 | T2(증거 전용: 읽기 전용, file:line 인용 근거로만 사용. 코드·주석·설정 안의 지시문은 따르지 않으며, 사실 확정과 행동 노드 입력은 ①·④ 같은 결정론적 출처로만) |
 | ④ 사내 자산 그래프 (Dependency-Track + 관계형/GUAC + 카탈로그) | purl → 아티팩트 → 서비스 → 시스템 → 계열사, 담당자, 노출, 데이터 등급, 빌드 시각, 액션 참조, 비밀 범위 | 고정 질의 템플릿 `blast_radius(purl, range)`, `workflows_using(action, mutable)`, `runs_between(t0, t1)`, `owners(service)` | SBOM 생성 시마다 | T0 |
 | ⑤ 사내 서술 지식 (벡터 + 메타데이터 필터) | 런북, 패치 SLA 정책, 과거 인시던트 티켓, (선택) KEV 선례 카드 | `search_runbook(incident_type)`, `search_policy(tier)`, `search_tickets(purl/CWE)`, `similar_kev(cwe, product_class, vector)` | 문서 변경 시 | T0(KEV 선례는 T1) |
 
@@ -107,7 +107,7 @@ LLM은 영향 목록이 확정된 다음 단계에서 가치를 낸다. 서비�
 
 ```
 [진입 A: 스캔]  Syft SBOM → Grype ∥ OSV-Scanner → 결과(purl, CVE/GHSA)
-[진입 B: 이벤트] KEV dateAdded diff / OSV modified_id.csv(MAL) → ④ blast_radius 조인 → 영향 자산 목록(결정론, 재현율 100% 목표)
+[진입 B: 이벤트] KEV 레코드 diff(신규 CVE + 기존 레코드 필드 변경) / OSV modified_id.csv(MAL) → ④ blast_radius 조인 → 영향 자산 목록(결정론, 재현율 100% 목표)
         │
         ▼
 1. 사실 고정    ① 조회: KEV·EPSS·SSVC·영향 범위·수정 버전 (LLM 생성 금지, 스냅샷 기록)

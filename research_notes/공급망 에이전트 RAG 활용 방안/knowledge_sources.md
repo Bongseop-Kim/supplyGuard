@@ -167,7 +167,7 @@ Model weights are always stale for this domain. For example, Foundation-Sec-8B h
 ### Inferences
 Freshness design:
 - **Daily or hourly jobs:**
-  - KEV JSON diff on `dateAdded`
+  - KEV JSON diff per CVE ID on the full record (not only `dateAdded`), so changes to `knownRansomwareCampaignUse`, `notes`, `requiredAction`, `dueDate` are re-indexed
   - OSV `modified_id.csv` delta, including MAL- entries, withdrawals and retractions
   - EPSS daily score file
   - a Vulnrichment git pull

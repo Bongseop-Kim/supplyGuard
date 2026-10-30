@@ -53,7 +53,11 @@ Sources: https://github.com/anchore/syft/releases, https://github.com/anchore/gr
 - Grype's `risk` sort plus KEV/EPSS gives the agent a deterministic baseline ranking. The LLM can then explain or reorder that ranking instead of inventing scores.
 - Feed Grype the Syft SBOM rather than letting it rescan the directory. That gives a reproducible SBOM → scan step and matches the pipeline narrative.
 - Running OSV-Scanner alongside Grype shows scanner disagreement, which the literature in section 3 documents, and its `fix` command gives a non-LLM baseline to compare against the LLM remediation plan.
-- Grype's 5-day DB-age guard means demos have to refresh the DB or turn off `validate-age` when running offline. Plan a "freeze DB snapshot" step so demo runs are reproducible.
+- Grype's 5-day DB-age guard means demos have to refresh the DB or turn off `validate-age` when running offline. Plan a "freeze DB snapshot" step so demo runs are reproducible:
+  - Disable auto-update for pinned runs: `GRYPE_DB_AUTO_UPDATE=false` (config `db.auto-update: false`); import a saved archive with `grype db import <archive>`.
+  - Record DB provenance per run: `grype db status -o json` (schema version, build/creation timestamp, checksum) stored with the scan output.
+  - Age check when auto-update is off or offline: compare the recorded build timestamp with the run time; with `validate-age` on (default max 120h) Grype refuses stale DBs, so for intentionally frozen snapshots set `GRYPE_DB_VALIDATE_AGE=false` and instead log the computed DB age in the run record and flag runs whose DB age exceeds policy.
+  - Confirm JSON keys locally before parsing: `grype <target> -o json | jq '.matches[0].vulnerability'` (risk, EPSS, KEV field paths). (Env var/flag names to be verified against `grype --help` / config docs for the installed version.)
 
 ### Gaps
 - Exact Grype JSON key names for risk, EPSS and KEV need to be confirmed locally (`grype <target> -o json | jq '.matches[0].vulnerability'`).
