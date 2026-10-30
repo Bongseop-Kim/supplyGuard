@@ -1,0 +1,39 @@
+[project]
+name = "supplyguard"
+version = "0.1.0"
+description = "SupplyGuard — 스캔 결과 이후의 보안 판단·조치를 대신하는 에이전트 플랫폼"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.32",
+    "pydantic>=2.9",
+    "sqlalchemy>=2.0",
+    "alembic>=1.14",
+    "psycopg[binary]>=3.2",
+    "docker>=7.1",
+    "httpx>=0.28",
+    "openai>=2.0",
+]
+
+[project.scripts]
+sg = "supplyguard.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.8"]
+
+[build-system]
+requires = ["uv_build>=0.8.5,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+
+[tool.ruff]
+line-length = 165
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+per-file-ignores = { "supplyguard/nodes/__init__.py" = ["E402"] }
