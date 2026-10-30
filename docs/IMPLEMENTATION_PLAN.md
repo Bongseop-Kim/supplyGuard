@@ -180,3 +180,33 @@ UI(M4)와 판단 노드(M2)는 산출물 스키마(M0)와 그래프 스키마(M1
 | VEX-Bench 데이터 접근 | 접근 불가 시 자체 픽스처만으로 6.1 수행, 공개 수치는 참고 기준선으로만 |
 | 합성 데이터가 가짜처럼 보임 | 스캔 대상은 실제 오픈소스 저장소, 합성은 자산 메타데이터에 한정하고 문서에 명시 |
 | 본선 사전 코드 사용 허용 여부 미확인 | 스키마·노드 규칙·평가 절차를 문서로 남겨 재구현 가능하게 |
+
+## 8. 진행 현황 (2026-10-30)
+
+| 마일스톤 | 상태 | 완료 조건 확인 |
+| --- | --- | --- |
+| M0 기반 | 완료 | `uv run pytest` 통과, `docker compose up -d db` + `alembic upgrade head` 후 PostgreSQL에서 S1·S2·관리 API 동작 |
+| M1 진단 환경 코어 | 완료 | `sg run fixtures/graphs/s1-scan.json`: 저장소 → Syft → Grype·OSV-Scanner(`--network none`) → 병합 → 보강. `sg replay <run>`에서 결정론·컨테이너 노드 산출물 해시 10/10 일치 |
+| M2 판단 노드 | 완료(AI 경로는 키 필요) | S1 전체와 S2(`sg event kev CVE-2020-11023`). 판정마다 근거 file:line·출처(KEV·EPSS·OSV 레코드, 스냅샷) |
+| M3 관리 계층 | 완료 | `eval/s4_rescan.py`: "235건 중 182건 재사용, 53건 재판정(근거 파일 변경 49·코드 변경 3·권고 수정 1)", 사람 확정 판정 보존 |
+| M4 UI | 진행 중 | 브라우저에서 S1 캔버스 → 실행 → 근거 열람 |
+| M5 AI 에이전트 | 구현, 실측 전 | 작성기 검사기 루프는 가짜 응답 테스트 통과. 실제 호출은 OPENAI_API_KEY 필요 |
+| M6 평가 | 6.2·6.4 완료, 6.1 부분, 6.3 미실행 | [eval/README.md](../eval/README.md) |
+| M7 확장 | 일부 | 노드 캐시 대신 재실행 시 성공 노드 재사용, 예외·추이·증빙 export·발송함 구현. 나머지 미착수 |
+
+M1 미확인 항목 확인 결과(2026-10-30, 실제 실행):
+- Grype v0.121.0 `-o json`: `matches[].vulnerability{id,severity,cvss[],fix.versions}`, `relatedVulnerabilities[].id`, `artifact{name,version,purl,locations}`, `descriptor.db.status{schemaVersion,built}`. `cvss`·`fix`·`locations`는 null일 수 있다.
+- Grype DB: `GRYPE_DB_CACHE_DIR`, `GRYPE_DB_AUTO_UPDATE=false`, `GRYPE_DB_VALIDATE_AGE=false`. 비root로 돌리려면 `/tmp`를 쓰기 가능한 tmpfs로 둬야 한다.
+- OSV-Scanner v2.7.0: `scan source --offline-vulnerabilities -L <bom.cdx.json>`, DB 위치는 `OSV_SCANNER_LOCAL_DB_CACHE_DIRECTORY`(`osv-scalibr/npm/all.zip`). 오프라인 DB가 없는 생태계(예: Syft가 찾은 GitHub Actions)가 섞이면 전체가 실패 → npm 구성요소만 넘긴다. 취약점이 있으면 종료 코드 1.
+- 네트워크 차단: 세 스캐너 모두 `--network none`으로 동작. 허용 목록 프록시는 필요 없었다.
+
+계획과 달라진 점:
+- **무효화 단위 세분화(기본 `file`)**: 기획서 4.10.2 초기안(서비스 단위)은 코드 한 줄 변경에도 전부 재판정한다(6.4에서 4,010건 대 365건). affected는 인용 근거 파일이 바뀔 때만, not_affected·uncertain은 코드·lockfile이 바뀌면 항상 재판정. 노드 파라미터 `granularity`로 초기안도 선택 가능. 6.4 누락 0.
+- **무효화 조건 추가(6) 취약 조건 카드 변경**: 판정 근거 지식이 바뀌면 다시 판정.
+- **코드 버전 = 내용 해시**: 픽스처가 상위 저장소 안에 있어 커밋 SHA가 코드 버전을 대표하지 못한다. 앱 코드·템플릿·package.json 내용 해시(`code_hash`)를 쓰고, 저장소 루트일 때만 커밋을 기록.
+- **호출 그래프(no_path 증명) 미구현**: 증명으로 인정하지 않는다. not_affected 근거는 심볼 부재(+다른 패키지의 의존 없음)와 설정 미충족만.
+- **사용 검색 범위**: 템플릿(ejs·hbs·dust…)과 package.json scripts·빌드 설정까지 본다. jquery처럼 서버 코드가 import하지 않아도 번들 스크립트로 쓰이는 경우를 '부재'로 오판하지 않기 위해.
+- **판정 재사용 기록**: 재사용한 판정은 DB 행을 새로 만들지 않고 실행 산출물의 `reused_from`으로 연결.
+- **작업 큐**: `SELECT … FOR UPDATE SKIP LOCKED` 대신 조건부 UPDATE(queued→running)로 점유. API 내장 작업자·worker·CLI가 겹쳐도 한 번만 돈다. SQLite·PostgreSQL 공통.
+- **compose**: 웹은 api가 `frontend/dist`를 서빙(별도 web 컨테이너 없음). pgvector는 판정 이력 RAG(M7) 때 도입.
+- **테스트 DB**: 단위 테스트는 SQLite. FK 순서 문제는 PostgreSQL에서만 드러나 수정함(`load_portfolio`).
