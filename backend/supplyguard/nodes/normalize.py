@@ -72,6 +72,19 @@ def osv(doc: dict, service_id=None) -> list[Finding]:
     return out
 
 
+def trivy(doc: dict, service_id=None) -> list[Finding]:
+    out = []
+    for r in doc.get("Results") or []:
+        for v in r.get("Vulnerabilities") or []:
+            purl = ((v.get("PkgIdentifier") or {}).get("PURL") or f"pkg:npm/{v['PkgName']}@{v['InstalledVersion']}").split("?")[0]
+            ids = {v["VulnerabilityID"], *(v.get("VendorIDs") or [])}
+            out.append(Finding(service_id=service_id, name=v["PkgName"], version=v["InstalledVersion"], purl=purl, ecosystem=_name_from_purl(purl)[2],
+                               vuln_id=_best_id(ids), aliases=sorted(ids), tools=["trivy"], severity=(v.get("Severity") or "").title() or None,
+                               cvss=sorted({c[k] for c in (v.get("CVSS") or {}).values() for k in ("V3Vector", "V40Vector") if c.get(k)}),
+                               fixed=[x.strip().lstrip(">=") for x in (v.get("FixedVersion") or "").split(",") if x.strip()]))
+    return out
+
+
 def merge(findings: list[Finding]) -> list[Finding]:
     """같은 패키지@버전에서 ID·별칭이 겹치면 한 건으로. 탐지 도구·위치는 합쳐 보존한다"""
     groups: list[Finding] = []

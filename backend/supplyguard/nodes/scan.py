@@ -71,6 +71,24 @@ def osv(ctx, inp, p):
     return {"findings": normalize.merge(out)}
 
 
+@node("scan.trivy", "Trivy 스캔", "스캔", kind="container", inputs={"sbom": "SBOM"}, outputs={"findings": "Finding"},
+      desc="SBOM → 취약점. digest 고정 Trivy, 스냅샷 DB만(--skip-db-update --offline-scan). DB는 sg sync --only trivy로 받는다")
+def trivy(ctx, inp, p):
+    db = ctx.snapshot.dir / "trivy"
+    if not db.exists():
+        raise RuntimeError("스냅샷에 Trivy DB가 없다: sg sync --only trivy")
+    out = []
+    for i, s in enumerate(inp["sbom"]):
+        d = _write_sbom(ctx, s, i)
+        raw, info = sandbox.run("trivy", ["--cache-dir", "/cache", "sbom", "--skip-db-update", "--offline-scan", "--format", "json", "-q",
+                                          "/in/bom.cdx.json"], {d: "/in", str(db): "/cache"})
+        info = _check(info)
+        info["db"] = ctx.snapshot.manifest.get("trivy")
+        ctx.tool(info)
+        out += normalize.trivy(json.loads(raw), s.service_id)
+    return {"findings": normalize.merge(out)}
+
+
 @node("scan.merge", "스캔 결과 병합", "스캔", kind="deterministic",
       inputs={"a": "Finding", "b": ("Finding", False), "c": ("Finding", False)}, outputs={"findings": "Finding"},
       desc="여러 스캐너 결과를 같은 패키지@버전·ID 기준으로 합친다. 탐지 도구는 출처로 남는다")

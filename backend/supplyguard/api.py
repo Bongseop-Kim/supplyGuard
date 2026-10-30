@@ -262,8 +262,10 @@ def actions():
 
 @app.patch("/api/manage/actions/{aid}")
 def action_update(aid: int, req: dict = Body(...)):
+    if req.get("status") not in ("requested", "in_progress", "done", "verified") or not req.get("by"):
+        raise HTTPException(422, "status는 requested·in_progress·done·verified, by(변경자)는 필수")
     with session() as db:
-        a = ops.set_action(db, aid, req["status"], req.get("by", "-"), req.get("note", ""), req.get("ticket"))
+        a = ops.set_action(db, aid, req["status"], req["by"], req.get("note", ""), req.get("ticket"))
         return {"id": a.id, "status": a.status}
 
 

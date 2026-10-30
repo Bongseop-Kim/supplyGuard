@@ -104,6 +104,17 @@ def _grype_db(dest: Path) -> dict:
     return {"built": s.get("built"), "schema": s.get("schemaVersion"), "from": s.get("from")}
 
 
+def _trivy_db(dest: Path) -> dict:
+    import docker
+
+    dest.mkdir(parents=True, exist_ok=True)
+    docker.from_env().containers.run(config.IMAGES["trivy"], ["--cache-dir", "/cache", "image", "--download-db-only", "-q"], remove=True,
+                                     volumes={str(dest): {"bind": "/cache", "mode": "rw"}}, tmpfs={"/tmp": "rw,mode=1777"},
+                                     environment={"HOME": "/tmp"}, user=f"{os.getuid()}:{os.getgid()}")
+    meta = json.loads((dest / "db" / "metadata.json").read_text())
+    return {"built": meta.get("UpdatedAt"), "schema": meta.get("Version")}
+
+
 def sync(sources=SOURCES) -> tuple[str, list[dict]]:
     """새 스냅샷을 만들고 (id, 이전 스냅샷 대비 이벤트)를 돌려준다. sources에 없는 것은 이전 스냅샷에서 물려받는다"""
     prev = latest()
@@ -125,6 +136,12 @@ def sync(sources=SOURCES) -> tuple[str, list[dict]]:
             (d / "osv-index.json").write_text(json.dumps(build_osv_index(d / OSV_ZIP)))
         else:
             _link(root() / prev / "osv-index.json", d / "osv-index.json")
+        if "trivy" in sources:  # 선택 소스(DB 1.6GB): 한 번 받으면 이후 스냅샷이 물려받는다
+            man["trivy"] = _trivy_db(d / "trivy") | {"fetched_at": now()}
+        elif prev and (root() / prev / "trivy").exists():
+            _link(root() / prev / "trivy", d / "trivy")
+            man["trivy"] = load_manifest(prev).get("trivy")
+            man["inherited"]["trivy"] = prev
         if "grype" in sources or not prev:
             man["grype"] = _grype_db(d / "grype") | {"fetched_at": now()}
         else:
@@ -144,8 +161,9 @@ def derive(base: str, osv_modified: dict[str, str], note: str) -> str:
     sid = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + "-sim"
     d, b = root() / sid, root() / base
     d.mkdir(parents=True)
-    for name in ("kev.json", "epss.csv.gz", "osv", "grype"):
-        _link(b / name, d / name)
+    for name in ("kev.json", "epss.csv.gz", "osv", "grype", "trivy"):
+        if (b / name).exists():
+            _link(b / name, d / name)
     idx = json.loads((b / "osv-index.json").read_text())
     for vid, mod in osv_modified.items():
         idx["ids"][vid]["modified"] = mod

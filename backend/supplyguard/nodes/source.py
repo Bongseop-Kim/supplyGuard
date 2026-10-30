@@ -59,7 +59,7 @@ def services(ctx, inp, p: ServicesParams):
 
 class ImportParams(BaseModel):
     path: str
-    format: Literal["cyclonedx", "grype", "osv"] = "cyclonedx"
+    format: Literal["cyclonedx", "grype", "osv", "trivy"] = "cyclonedx"
     service_id: str | None = None
 
 
@@ -70,12 +70,12 @@ def sbom_import(ctx, inp, p: ImportParams):
 
 
 @node("input.findings_import", "스캔 결과 import", "입력", kind="deterministic", outputs={"findings": "Finding"}, params=ImportParams,
-      desc="Grype·OSV-Scanner JSON 결과를 스캐너 노드와 같은 정규화기로 읽는다")
+      desc="Grype·OSV-Scanner·Trivy JSON 결과를 스캐너 노드와 같은 정규화기로 읽는다")
 def findings_import(ctx, inp, p: ImportParams):
     doc = json.loads(resolve(p.path).read_text())
-    fn = {"grype": normalize.grype, "osv": normalize.osv}.get(p.format)
+    fn = {"grype": normalize.grype, "osv": normalize.osv, "trivy": normalize.trivy}.get(p.format)
     if not fn:
-        raise ValueError("스캔 결과 import는 grype 또는 osv 형식")
+        raise ValueError("스캔 결과 import는 grype·osv·trivy 형식")
     return {"findings": normalize.merge(fn(doc, p.service_id))}
 
 
