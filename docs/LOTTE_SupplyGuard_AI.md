@@ -5,6 +5,8 @@
 원본 대화: 「적합 과제 추천」 / 답변 제목 「LOTTE SupplyGuard AI — 기업 기술 조사 및 개발 방향」
 
 > 이 문서는 기존 답변의 모든 텍스트 내용을 부록에 보존하고, 본문에서 근거 수준과 실행 계획을 체계적으로 정리한 문서다. 부록의 당시 단정 표현보다 본문의 확인 상태를 우선한다. 원본의 이미지 검색 위젯은 이미지 파일이 제공되지 않아 검색어로 기록했다. 개발 체크리스트와 상세 일정은 원문에 내용이 없거나 부족하여 추가 제안으로 작성했다.
+>
+> 2026-10-30 보완: 1·4·5·6·7·8절을 딥리서치 보고서 [../reports/공급망 에이전트 기획 보완 조사.md](<../reports/공급망 에이전트 기획 보완 조사.md>)와 대회 공식 사이트·FAQ 확인 결과로 보완했다. 목표는 과제6의 두 요구(① SBOM·스캔 결과 → 영향도·우선순위 아키텍처, ② AI 에이전트 기반 자동 조치 워크플로우)에 맞춘 바로 구현 가능한 근거 기반 설계다. 지원서 문안 작성과 코드는 범위 밖이다.
 
 ## 목차
 
@@ -27,10 +29,29 @@
 | 공식 확인 | 이번 작성 시 공식 페이지 본문 또는 검색에 노출된 공식 본문에서 확인 | 2026년 9월 AI 채용공고, 아이멤버 3.0 공개 기술 |
 | 이전 조사 기록 | 기존 답변에는 있으나 이번에 공식 원문을 다시 확인하지 못함 | 일부 보안 직무 공고, 보안 사업 상세 |
 | 언론 보도 | 공식 사이트 자체가 아닌 기사에서 확인 | 2026년 7월 AI 에이전트 10여 종 공개 |
+| 학술 | 학회·저널 논문 또는 arXiv 프리프린트 | Dependabot 병합률, LLM 수정 성공률, 도달성 연구 |
+| 벤더 주장 | 기업 보고서·블로그·마케팅. 독립 검증 안 됨 | Sonatype 환각 27.76%, Endor 노이즈 92%, Tenable의 BOD 26-04 요약 |
 | 제안·해석 | 공개 자료를 바탕으로 우리가 설계·판단 | SupplyGuard 스택, 우선순위, 일정, 평가 |
-| 미확인 | 공개 근거가 확보되지 않음 | 롯데 내부 SCA 제품, 아이멤버 내부 오케스트레이터, 과제별 실제 배치 팀 |
+| 미확인 | 공개 근거가 확보되지 않았거나 2차 출처에만 의존 | 롯데 내부 SCA 제품, 아이멤버 내부 오케스트레이터, 과제별 실제 배치 팀, 본선 사전 코드 사용 허용 여부 |
 
 채용공고의 기술명은 요구·우대 역량의 근거다. 아이멤버 내부 구현에 해당 기술이 사용된다는 증거로 확대해서는 안 된다. 연봉, 정규직 전환, 특정 팀 배치도 이 자료만으로 확정할 수 없다.
+
+### 1.1 과제6 요구와 심사 기준 — 공식 확인(2026-10-30, lotteaxchallenge.com·FAQ)
+
+**과제6 원문:** "SW 공급망 스캐닝 에이전트 기획 — SBOM 생성 및 취약점 스캔 결과를 영향도·우선순위로 연결하는 아키텍처 설계 / AI 에이전트 기반의 자동 조치안 도출 및 보안 개선 워크플로우 기획".
+
+| 과제 요구 | 이 문서의 대응 |
+| --- | --- |
+| SBOM·스캔 결과 → 영향도·우선순위 아키텍처 | 4.1 데이터 흐름, 4.2 SSVC형 결정 트리, 4.3 심각도 대체 조회, 4.5 VEX 감사 이력 |
+| AI 에이전트 기반 자동 조치·보안 개선 워크플로우 | 4.4 근거 고정 규칙·6단계 조치 파이프라인·샌드박스·승인 |
+
+| 심사 기준(공식) | 문서에서 겨냥하는 증거 — 제안 |
+| --- | --- |
+| 비즈니스 임팩트: 비즈니스 이해도·해결방안 적절성, 현업 적용·확산 가능성 | 알림 감소율+핵심 위험 재현율, 공개 산식, BOD 26-04 기한 등급, 다계열사 공통 적용 |
+| AI 에이전트 완성도: 설계·개발 수준, 결과 정확성·성능·안정성 | 6단계 깔때기, pass^3·멱등성·장애 주입 |
+| AI 이해 및 활용 역량 | LLM 단독 대 도구 근거 비교, 환각 버전률 측정, LLM-as-judge 편향 통제 |
+
+심사위원은 롯데 현업·AI 전문가·경영진과 OpenAI AI 전문가다(공식 확인). FAQ에 따르면 제출 내역은 객관적으로 입증 가능해야 하며 허위면 수상 후에도 취소된다. 따라서 문서·제출물에는 **실측한 수치만** 쓰고 기대값은 기대값으로 표시한다.
 
 ## 2. 기업 기술·채용공고 분석
 
@@ -81,31 +102,94 @@
 **SupplyGuard AI — AI-Powered Software Supply Chain Security Agent**  
 “취약점 탐지를 넘어, 실제 위험 분석부터 안전한 수정 완료까지.”
 
+### 4.1 데이터 흐름
+
 ```text
-Next.js 콘솔: 저장소 등록 / 취약점 현황 / 근거 / 수정 승인
+Next.js 콘솔: 저장소 등록 / 취약점 현황 / 결정 근거 / 수정 승인
        ↓
-FastAPI + PostgreSQL: 프로젝트·자산 / 작업 상태 / 분석·감사 이력
+FastAPI + PostgreSQL: 프로젝트·자산 / 작업 상태 / 결정 스냅샷·VEX·감사 이력
        ↓
-별도 Worker: 고정한 저장소 커밋을 대상으로 비동기 실행
-       ├─ Syft → CycloneDX SBOM → Grype / OSV
-       └─ LangGraph: 분석 → 수정 제안 → 검증 → 결과
-                  ├─ MCP 도구 어댑터
-                  ├─ 필요할 때 RAG
-                  └─ 정책 엔진 + 사람 승인
+별도 Worker: 고정한 저장소 커밋(lockfile)을 대상으로 비동기 실행
+       ├─ [영향도·우선순위]
+       │    Syft → CycloneDX SBOM ─┬─ Grype(주, --sort-by risk)
+       │                           └─ OSV-Scanner(교차 검증)
+       │      → 결과 정규화 + 불일치 리포트 + SBOM↔lockfile 정합성 검사
+       │      → 위협 보강기(KEV JSON · EPSS API · Vulnrichment · 심각도 대체 조회)
+       │      → 우선순위 결정 트리(SSVC형, 공개 산식) → Track/Track*/Attend/Act + 기한 등급
+       └─ [자동 조치] LangGraph 워크플로우
+            후보 버전 산출(OSV fixed / osv-scanner fix / 레지스트리 API)
+              → 레지스트리 존재·냉각 기간·MAL- 검사
+              → LLM: 후보 중 선택 · 깨지는 변경용 코드 수정 · 설명 (버전 생성 금지)
+              → 샌드박스 설치·빌드·테스트 → 재스캔(Grype+OSV)
+              → 실패 시 제한 재시도 / 성공 시 증빙 첨부 PR
+              ├─ MCP 도구 어댑터   ├─ 필요할 때 RAG   └─ 정책 엔진 + 사람 승인
        ↓
-수정 브랜치·PR → 격리된 빌드·테스트 → 재스캔
-       ↓
-검증 보고서 / 증빙 / 재점검 / 개발자 병합 승인
+검증 보고서 / VEX 내보내기 / 재점검 / 개발자 병합 승인(자동 병합 없음)
 ```
 
-### 설계 원칙 — 추가 제안
+### 4.2 우선순위 결정 트리 — SSVC형, 제안
+
+CVSS·KEV·EPSS·도달성·서비스 맥락을 하나의 가중합으로 섞지 않는다. KEV가 덮어쓰고, EPSS가 나머지를 가르고, CVSS·서비스 맥락이 긴급도를 정하는 계층형 규칙으로 두고 **산식을 공개**한다. Grype·Snyk도 비슷한 신호를 결합하지만 산식은 공개하지 않는다(공식 확인: Grype 문서, Snyk Risk Score 문서). 공개 산식과 재현 가능한 스냅샷이 차별점이다.
+
+| 단계 | 입력 | 판정 규칙 — 제안 |
+| --- | --- | --- |
+| 1. Exploitation | KEV, 랜섬웨어 플래그, EPSS 확률, 공개 PoC | KEV → active · EPSS ≥ 로컬 임계값(예: 0.1) 또는 PoC → poc · 그 외 none |
+| 2. Technical Impact | CVSS C/I/A, 취약점 유형 | C/I/A 모두 High 또는 RCE·인증 우회 → total · 그 외 partial |
+| 3. Automatable | CVSS v4 AU, Vulnrichment, AV:N/PR:N/UI:N | yes / no |
+| 4. Mission·노출 | SBOM↔서비스 매핑, 인터넷 노출, 데이터 등급 | minimal / support / essential |
+| 5. Reachability 수정자 | 호출 그래프 결과 + VEX 근거 | unreachable이면 한 단계 하향. 단 KEV는 Track\* 미만 금지 |
+| 출력 | — | Track / Track\* / Attend / Act + BOD 26-04 대응 기한 등급 + 결정 입력 스냅샷 |
+
+- **공식 확인:** CISA SSVC는 다섯 결정점으로 Track/Track\*/Attend/Act를 산출하며 일수는 정하지 않는다. CVSS v4.0은 Exploit Maturity가 미정의면 Attacked로 간주하므로 Base 점수만 쓰면 과대평가된다 → KEV면 E=Attacked, PoC면 E=POC, 그 외 E=Unreported로 CVSS-BT를 산출(제안). EPSS는 확률이 주 값이고 공식 임계값이 없다 → 0.1은 **로컬 정책**이며 확률·모델 버전·날짜를 함께 저장한다.
+- **기한 등급:** CISA BOD 22-01은 폐지되어 **BOD 26-04(2026-06-10)**로 대체됐다(공식 확인: BOD 22-01 페이지 표시). BOD 26-04의 네 변수(외부 노출, KEV, 자동화 가능성, 기술적 영향)와 3일/14일/60일 등 등급은 **벤더 주장**(Tenable 요약)이며 원문 부록 A 조합 표는 **미확인**이다. "KEV = 2주"를 현행 규칙으로 쓰지 않는다.
+- **도달성:** reachable / unreachable / unknown 3상태. unknown은 reachable로 취급한다. 근거: Maven 연구에서 취약 코드 도달 패키지 1% 미만(학술), 반면 정적 호출 그래프는 리플렉션·설정 경로를 놓친다(미확인). P0에서는 도달성 분석을 하지 않고 모두 unknown으로 둔다.
+- KEV 미등재는 "악용되지 않음"의 증거가 아니다.
+
+### 4.3 데이터 출처 대체 조회 — 제안
+
+| 항목 | 조회 순서 | 실패 시 |
+| --- | --- | --- |
+| 심각도(CVSS) | NVD → CNA 점수 → CISA Vulnrichment ADP → GHSA/OSV 심각도 | "미산정". 0점 처리 금지, "중간 + EPSS"로 취급 |
+| EPSS | FIRST EPSS API | 신규 CVE는 미산정 표시 후 일정 기간 뒤 재평가 |
+| KEV | CISA KEV JSON 피드 | 직전 스냅샷 사용 + 스냅샷 날짜 표시 |
+| 후보 버전 | OSV `fixed` 이벤트 → `osv-scanner fix` → 레지스트리 API | "수정 버전 없음"으로 보고. 버전을 지어내지 않음 |
+
+근거: NIST가 2026-04-15부터 NVD 보강을 KEV 등 위험 기반으로 축소하고 자체 CVSS 부여를 중단했다는 보도가 있다(**미확인**, 2차 보도. NIST 원문 미열람). EPSS v4도 NVD 보강 불안정으로 cve.org CNA/ADP 데이터를 보조 출처로 추가했다(Empirical Security의 EPSS v4 소개 글 기준).
+
+### 4.4 자동 조치 워크플로우 — 근거 고정·샌드박스·승인
+
+**근거 고정 규칙(grounding):** LLM은 버전 번호나 패키지 이름을 생성하지 않는다. 도구가 만든 후보 버전 목록에서 **선택**하거나, 깨지는 변경에 맞춘 **코드 수정**을 제안하거나, **설명**을 쓰는 역할로 제한한다. 출력은 스키마로 검증하고 후보 목록 밖의 값은 거부한다. 근거: GPT-5 업그레이드 권고의 27.76%가 존재하지 않는 버전(벤더 주장, Sonatype), 16개 LLM 추천 패키지의 19.7%가 비실존(학술, USENIX Security 2025).
+
+| 단계 | 내용 | 판정 주체 |
+| --- | --- | --- |
+| ① 후보 산출 | OSV fixed / `osv-scanner fix`로 최소 수정 버전 후보 | 도구 |
+| ② 사전 검사 | 레지스트리 실존, 냉각 기간(예: 게시 후 3일), 악성(MAL-)·yanked 여부 | 도구 |
+| ③ 샌드박스 검증 | 비밀정보 없는 임시 컨테이너, egress는 레지스트리만, `npm ci --ignore-scripts` → 빌드 → 테스트 | 실행 결과 |
+| ④ 재스캔 | 대상 권고 소멸 + 신규 권고 없음(Grype+OSV) | 도구 |
+| ⑤ 제한 재시도 | 실패 시 LLM이 깨지는 변경용 코드 수정을 N회까지 제안 → ③부터 반복 | 실행 결과 |
+| ⑥ PR·승인 | 변경 로그 차이·테스트·재스캔 증빙 첨부 PR, 사람 승인 | 사람 |
+
+- **권한 분리:** 분석용 토큰은 저장소 범위 읽기 전용, PR 생성용 쓰기 권한은 별도 ID. 병합 권한은 에이전트에 주지 않는다. 근거: 이슈 본문 지시문으로 GitHub MCP 에이전트가 비공개 데이터를 유출한 시연(벤더 주장, Invariant Labs). 권고문·README·변경 로그·이슈 본문은 모두 신뢰하지 않는 입력이다.
+- **항상 사람 승인:** CI 설정, 빌드 스크립트, 레지스트리 출처, lockfile 외 매니페스트 대규모 변경.
+- **자동 병합 없음 유지:** Google·DeepMind CodeMender·OpenAI Aardvark 모두 사람 검토 PR로 끝난다(벤더 주장). Renovate식 등급형 자동 병합(패치 레벨·테스트 통과·필수 상태 검사 지정)은 향후 정책 옵션으로만 둔다. Renovate는 필수 상태 검사 미지정 시 실패 PR도 병합될 수 있다고 경고한다(공식 확인).
+- **왜 이 영역인가:** 단순 버전 업 봇 PR은 이미 약 65~75% 병합된다(학술). 깨지는 업데이트·코드 수준 LLM 수정은 15~34%에 그친다(학술·벤더 혼재). 에이전트의 목표는 후자 영역과 노이즈 감소이며, 판정은 빌드·테스트·재스캔이 맡는다.
+
+### 4.5 VEX 감사 이력과 재현성 — 제안
+
+- 모든 우선순위 결정에 **결정 입력 스냅샷**을 저장: CVSS 벡터·출처, EPSS 확률·모델 버전·날짜, KEV dateAdded·스냅샷 날짜, 도달성 상태·도구 버전, 적용 규칙 버전.
+- "도달 불가로 하향", "영향 없음" 같은 판단은 VEX로 남긴다. 내부 모델은 CycloneDX analysis(state·justification·response, 변경자·시각), Grype 필터용으로 OpenVEX를 내보낸다. OpenVEX `not_affected`는 justification 또는 impact_statement가 필수다(공식 확인). CycloneDX 필드의 Dependency-Track 호환은 **미확인**.
+- 분석 상태는 Dependency-Track 체계(EXPLOITABLE / IN_TRIAGE / FALSE_POSITIVE / NOT_AFFECTED / NOT_SET)를 따른다(공식 확인).
+- 실행마다 도구 버전·체크섬·Grype DB 스냅샷을 기록한다. Trivy는 2026년 3월 공급망 침해(CVE-2026-33634)가 있었으므로 쓰더라도 공식 Homebrew 또는 digest로 고정한다(공식 확인).
+
+### 4.6 설계 원칙 — 추가 제안
 
 - API는 작업을 접수하고 상태를 반환한다. 긴 스캔은 Worker가 수행한다.
 - PoC에서는 PostgreSQL 작업 테이블과 단일 Worker로 시작할 수 있다. 별도 MQ·Kubernetes는 동시 처리나 운영 요구가 생기면 추가한다.
-- 도구가 생성한 패키지·버전·취약점 식별자를 기준으로 분석한다. LLM이 탐지 결과를 만들어내지 않도록 한다.
-- CVSS·KEV·EPSS·서비스 맥락을 구분해 기록한다. KEV 해당 여부는 정책으로 우선 검토 표시하고 LLM은 추가 근거와 불확실성을 설명한다.
-- 의존성 존재만으로 실행 경로 도달성이나 악용 가능성을 확정하지 않는다.
-- 저장소 코드·권고문은 신뢰하지 않는 입력으로 처리한다. 빌드에는 비밀정보를 주입하지 않고 시간·자원·네트워크 권한을 제한한다.
+- 도구가 생성한 패키지·버전·취약점 식별자를 기준으로 분석한다. LLM이 탐지 결과·버전 번호를 만들어내지 않도록 한다(4.4).
+- CVSS·KEV·EPSS·서비스 맥락을 구분해 기록하고, 우선순위는 4.2 결정 트리가 정한다. LLM은 추가 근거와 불확실성만 설명한다.
+- 의존성 존재만으로 실행 경로 도달성이나 악용 가능성을 확정하지 않는다. 도달성 unknown은 reachable로 취급한다.
+- 입력은 lockfile로 하고, 단일 스캐너를 믿지 않는다. Grype·OSV-Scanner의 합집합·교집합·불일치를 함께 보여준다(학술: SCA 도구 간 결과 편차가 크고 유효 SBOM에서 조용히 실패하는 사례 보고).
+- 저장소 코드·권고문은 신뢰하지 않는 입력으로 처리한다. 빌드에는 비밀정보를 주입하지 않고 시간·자원·네트워크 권한을 제한한다(`--ignore-scripts`, 레지스트리만 허용).
 - PR 생성과 병합 권한을 분리하고 자동 병합은 하지 않는다. 승인 대상 커밋이 변경되면 재검증한다.
 - 외부 모델에 전달할 코드 범위를 제한하고 토큰·비밀정보를 로그에서 제거한다.
 - RAG·Re-ranking·Multi-Agent·파인튜닝은 실제 품질 개선이 입증되는 경우에만 추가한다. 역할 구분은 단일 Workflow로도 구현할 수 있다.
@@ -114,59 +198,93 @@ FastAPI + PostgreSQL: 프로젝트·자산 / 작업 상태 / 분석·감사 이�
 
 | 기능 | 구현 제안 | 기대 효과 |
 | --- | --- | --- |
-| SBOM 자동 생성 | Syft·CycloneDX | 오픈소스 자산 식별 |
-| 위험도 우선순위화 | CVSS·KEV·EPSS와 서비스 맥락 | 조치 대상 선별 |
-| 증거 기반 AI 분석 | 코드 맥락·권고문·필요시 RAG | 근거와 불확실성 표시 |
-| 자동 패치 PR | GitHub API·격리 빌드·테스트 | 반복 수정 공수 절감 |
-| 재검증·조치 관리 | CI·Grype 재스캔·감사 로그 | 조치 결과 증빙 |
+| SBOM 자동 생성 | Syft·CycloneDX, lockfile 정합성 검사 | 오픈소스 자산 식별 |
+| 위험도 우선순위화 | 4.2 SSVC형 결정 트리(공개 산식) → Track/Track\*/Attend/Act + BOD 26-04 기한 등급 | 조치 대상 선별, 결정 재현·감사 |
+| 증거 기반 AI 분석 | 도구 산출 후보 안에서만 선택·설명, 필요시 RAG | 근거와 불확실성 표시, 환각 차단 |
+| 자동 패치 PR | 4.4 6단계 파이프라인(후보 산출→사전 검사→샌드박스→재스캔→제한 재시도→승인) | 깨지는 업데이트·노이즈 영역 공수 절감 |
+| 재검증·조치 관리 | Grype+OSV 재스캔, VEX, 감사 로그 | 조치 결과 증빙 |
 
-효과는 기대값이며 실측 성과가 아니다. 핵심 차별점은 **LLM의 설명이 아니라 실제 테스트·재스캔 결과로 수정 결과를 판정**하는 것이다. 이 결과도 모든 취약점 제거를 보장하지 않는다.
+효과는 기대값이며 실측 성과가 아니다. 참고 기준선: 단순 버전 업 봇 PR 병합 65.42%·74.53%(학술), 깨지는 업데이트 LLM 빌드 수리 27%, LLM 에이전트 취약점 패치 34.0%(학술), sanitizer 버그 수정 15%(벤더 주장, Google). 이 수치는 측정 대상이 달라 우리 목표치로 직접 쓰지 않는다. 핵심 차별점은 **LLM의 설명이 아니라 실제 테스트·재스캔 결과로 수정 결과를 판정**하는 것이다. 이 결과도 모든 취약점 제거를 보장하지 않는다.
+
+### 툴체인 — 공식 확인(2026-10 릴리스, 모두 Apache-2.0) + 역할 제안
+
+| 도구(확인 버전) | 역할 — 제안 | 주의점 |
+| --- | --- | --- |
+| Syft v1.55.0 | SBOM 생성(CycloneDX) | 출력 포맷 버전 상세 미확인 |
+| Grype v0.121.0 | 주 스캐너, EPSS·KEV·risk 정렬, OpenVEX 필터 | 산식 비공개. DB가 120h(`max-allowed-built-age`) 넘으면 스캔 거부 → 스냅샷 고정 필요. JSON 키 경로 **미확인** |
+| OSV-Scanner v2.7.0 | 교차 검증 + `osv-scanner fix` 비 LLM 기준선 | EPSS/KEV 없음. `fix`는 실험 기능, npm·Maven만, `overrides`·git 의존성 무시, 재설치 안 함 |
+| Trivy v0.76.1 | 선택적 2차 의견 | 2026-03 공급망 침해(GHSA-69fq-xp46-6x23, 악성 v0.69.4, trivy-action 태그 76/77 하이재킹). 버전·digest 고정. EPSS/KEV 지원 **미확인** |
+| cdxgen v13.5.0 | P2 도달성 실험 | npm 설치에 Node ≥24 필요 |
+| Dependency-Track 5.2.1 | 연동 대상으로만 언급 | 서버형 |
+
+**데모 생태계·저장소 — 제안:** npm. 결정론적 lockfile, `osv-scanner fix` 지원, `npm ci && npm test`로 반복이 단순하다. Python은 자동 수정 기준선이 없고 SBOM 생성기 출력으로 취약점 약 20% 이상을 놓친다는 연구가 있다(학술). 저장소는 snyk-labs/nodejs-goof 포크(Apache-2.0, lockfile 있음)를 1순위로 하고, lodash 4.17.4→4.17.21(안전한 패치 업)과 marked 0.3.5→4.x(깨지는 메이저 업)를 대비 사례로 쓴다. 기존 `npm test`가 `snyk test`이므로 supertest 라우트 스모크 테스트와 lodash·marked·moment 동작 단위 테스트로 교체한다. 별도로 취약 npm 패키지 약 10개 + jest 테스트의 **자체 픽스처 저장소**를 CI 회귀용으로 만든다.
 
 ### 개발 체크리스트 — 원문 빈 항목 보완 / 추가 제안
 
 **P0: 먼저 완주할 최소 흐름**
 
-- [ ] 생태계 하나와 허용된 샘플 저장소 선정
-- [ ] 커밋 고정·SBOM 생성·스캔 결과 정규화
-- [ ] 패키지·버전·권고문 링크와 우선 검토 근거 표시
-- [ ] LLM 설명과 도구 판정 결과 분리
-- [ ] 한 가지 의존성 업데이트의 diff·수정 제안
-- [ ] 격리된 빌드·테스트·재스캔 및 실패 상태 표시
+- [ ] npm 단일 생태계: snyk-labs/nodejs-goof 포크(테스트 교체) + 자체 픽스처 저장소 준비, 커밋 SHA 고정
+- [ ] 도구 버전 고정·체크섬 기록, Grype DB 스냅샷 고정 절차(120h 제한 대응)
+- [ ] Syft → CycloneDX SBOM, SBOM 구성요소 수 ≈ lockfile 패키지 수 정합성 검사
+- [ ] Grype 스캔 + OSV-Scanner 교차 검증, 결과 정규화와 불일치 리포트(`grype -o json` 키 경로 실측 확인)
+- [ ] KEV·EPSS 스냅샷 보강, 심각도 대체 조회, 4.2 결정 트리와 결정 입력 스냅샷 저장
+- [ ] 후보 버전 결정론적 산출(OSV fixed / `osv-scanner fix`)과 레지스트리 실존·MAL- 검사
+- [ ] LLM은 후보 중 선택·설명만, 출력 스키마 검증으로 후보 밖 값 거부
+- [ ] 샌드박스 `npm ci --ignore-scripts`·빌드·테스트·재스캔 및 실패 단계 표시
 - [ ] 승인·실행·결과 감사 이력
-- [ ] 성공 사례와 실패 사례의 재현 명령·데모 확보
+- [ ] 평가셋 15~20건(블라인드 5건 이상)과 성공·실패 사례의 재현 명령·데모 확보
 
 **P1: P0 이후 연결**
 
-- [ ] 실제 GitHub 수정 PR 및 CI 결과 수집
-- [ ] 최소 권한 인증과 프로젝트 접근 통제
-- [ ] 제한된 재시도·중복 실행 방지
+- [ ] 실제 GitHub 수정 PR(증빙 첨부) 및 CI 결과 수집, 읽기 전용 토큰과 PR 쓰기 ID 분리
+- [ ] `osv-scanner fix` 단독 대 에이전트 비교, LLM 단독 대 도구 근거 비교
+- [ ] 실패 시 제한 재시도(깨지는 변경용 코드 수정 루프)
+- [ ] VEX 내보내기(CycloneDX analysis → OpenVEX)와 분석 상태·재점검
+- [ ] 멱등성·중복 실행 방지, 장애 주입 시 정상 저하
 - [ ] MCP 호출 시연 및 근거 보고서 내보내기
-- [ ] 예외·오탐 검토 상태와 재점검
 
 **P2: 필요가 확인되면 추가**
 
-- [ ] 다중 생태계·컨테이너 이미지
+- [ ] 함수 수준 도달성(cdxgen `evinse` 또는 govulncheck류)
+- [ ] 다중 생태계·컨테이너 이미지, Trivy 2차 의견(digest 고정)
+- [ ] Dependency-Track 연동, Renovate식 등급형 자동 병합 정책(옵션)
 - [ ] 전용 Vector DB·Re-ranking·복수 에이전트
 - [ ] 대규모 작업 큐·Kubernetes
 - [ ] 모델 파인튜닝·추론 최적화
 
 ## 6. 개발 일정 — 추가 제안
 
-원문은 접수 마감 11월 4일을 전제로 했고, 앞선 대화에는 본선 11월 24~25일이 언급됐다. **이번 문서에서는 대회 공식 공지·규정을 확보하지 못했으므로 두 날짜와 사전 개발 허용 범위는 미확인**이다. 아래는 해당 날짜를 임시 기준으로 한 작업안이다. 대회가 사전 구현을 제한하면 준비는 조사·설계·연습·평가셋으로 한정한다.
+### 6.1 대회 일정·규정 — 공식 확인(2026-10-30, lotteaxchallenge.com·FAQ)
+
+| 항목 | 내용 |
+| --- | --- |
+| 대회 | LOTTE AX Challenge 2026, 개인 참가만 가능 |
+| 예선 접수 | 2026-10-28 ~ 11-04 23:59, 온라인 |
+| 예선 제출물 | 과제 선택, 과제 해결방안 "정의 및 기획안" 3000자 + "구축방안" 3000자, AI 역량 텍스트, 수상/공모전 1000자, 포트폴리오 파일 첨부 |
+| 결과 발표 | 11월 중 |
+| 본선 | 2026-11-24~25, 롯데인재개발원 오산캠퍼스 1박 2일. 구체화된 과제와 현장 데이터가 당일 공개되고 현장에서 프로토타입 Agent 개발 |
+| 채용 연계 | 2027-01 인턴십(I'M 전형, 2027 입사 가능자) |
+| 포트폴리오 | 본선 진출자 선발 시 AI 역량 추가 확인용(FAQ) |
+| 제출 진실성 | 객관적으로 입증 가능해야 하며 허위면 수상 후에도 취소(FAQ) |
+| 사전 개발 | 공개 자료에 사전 개발 금지 조항 없음. **본선에서 사전 작성 코드 사용 허용 여부는 미확인** |
+
+**해석 — 제안:** 예선은 텍스트 기획안과 포트폴리오로 평가되므로, 11월 4일 전 P0 구현은 기획안의 "구축방안"과 포트폴리오를 실측으로 뒷받침하는 용도다. 본선 데이터·과제는 당일 공개되므로 특정 저장소에 맞춘 구현보다 **입력이 바뀌어도 재사용되는 파이프라인·결정 규칙·평가 하네스**를 준비한다. 사전 코드 사용이 금지될 경우에 대비해 설계 문서·결정 표·평가 절차는 코드 없이도 재구현 가능하게 유지한다.
+
+### 6.2 작업 일정 — 제안
 
 | 기간(2026년) | 작업 | 완료 증거 |
 | --- | --- | --- |
-| 10월 30일 | 과제 요구·규정 확인, 대상 생태계·데모 선정 | 범위 문서와 시나리오 |
-| 10월 31일 | SBOM·스캔·결과 정규화 | 재현 가능한 결과 파일 |
-| 11월 1일 | 우선순위 정책·AI 근거 설명 | 근거·불확실성이 있는 분석 |
-| 11월 2일 | 수정 제안·격리 검증 | 성공·실패 결과 및 diff |
-| 11월 3일 | 콘솔·감사 이력·평가 | 최소 흐름 완주와 실측표 |
-| 11월 4일(가정) | 제출 자료 점검·제출 | 요구 형식·마감 재확인 |
-| 예선 이후~본선 전 | 규정 내 연습, 실패 복구·발표 정리 | 데모 재현 절차 |
-| 본선 1일차(가정) | 환경·분석 흐름, 수정·검증 연결 | 한 저장소의 전체 흐름 |
-| 본선 2일차(가정) | 평가·오류 처리·발표 리허설 | 실측 결과와 한계 공개 |
+| 10월 30일 | 과제 요구·규정 확인, nodejs-goof 포크·픽스처 범위 확정, 도구 버전 고정 | 범위 문서와 시나리오 |
+| 10월 31일 | SBOM·Grype+OSV 스캔·정규화·불일치 리포트, DB 스냅샷 고정 | 재현 가능한 결과 파일 |
+| 11월 1일 | KEV·EPSS 보강, 결정 트리·스냅샷, AI 근거 설명 | 근거·불확실성이 있는 우선순위 결과 |
+| 11월 2일 | 후보 버전 산출·사전 검사·샌드박스 검증·재스캔 | 성공·실패 결과 및 diff |
+| 11월 3일 | 콘솔·감사 이력, 평가셋 15~20건 깔때기 측정 | 최소 흐름 완주와 실측표 |
+| 11월 4일 23:59 마감 | 기획안(3000자×2)·AI 역량·포트폴리오 점검·제출 | 실측값만 기재했는지 재확인 |
+| 결과 발표(11월 중)~본선 전 | 평가셋 30~50건 확장, ablation·pass^3·장애 주입, 실패 복구·발표 정리 | 데모 재현 절차 |
+| 본선 1일차(11-24) | 공개 과제·데이터 분석, 파이프라인 적용, 수정·검증 연결 | 현장 데이터의 전체 흐름 |
+| 본선 2일차(11-25) | 평가·오류 처리·발표 | 실측 결과와 한계 공개 |
 
-시간이 부족하면 지원 생태계와 수정 사례 수를 줄인다. 승인, 근거 표시, 검증 실패 처리는 유지한다.
+시간이 부족하면 수정 사례 수와 UI를 줄인다. 근거 고정, 승인, 결정 스냅샷, 검증 실패 처리는 유지한다.
 
 ## 7. 평가 계획 — 제안
 
@@ -176,24 +294,75 @@ adGuard에서 정답셋·블라인드 사례·정밀도·재현율 평가를 다
 
 | 평가 | 측정 방법 | 판정·기록 |
 | --- | --- | --- |
-| SBOM 정확도 | 수동 검토한 고정 커밋의 의존성과 비교 | 직접·전이·개발 의존성 구분, 누락·오식별 |
-| 탐지 성능 | 버전·권고문으로 검증한 양성·음성 사례 | TP·FP·FN, 정밀도·재현율 |
-| 우선순위 품질 | 검토자 기준의 우선 조치 목록과 비교 | 상위 k개 적중률 및 불일치 이유 |
-| 근거 품질 | 인용 URL·버전·주장 간 일치 검토 | 근거 없는 주장·잘못된 인용 수 |
-| 패치 성공률 | 전체 시도 중 빌드·테스트·대상 취약점 재스캔 통과 | 세 조건을 모두 만족한 비율 |
-| 안전성 | 미승인 실행·병합, 비밀 노출, 근거 없는 안전 확정 검사 | 테스트 범위에서 발생 0건 목표 |
-| 운영 성능 | 동일 환경에서 반복 실행 | 총 처리 시간·LLM 비용·실패 복구율 |
+| SBOM 정확도 | 수동 검토한 고정 커밋의 의존성·lockfile과 비교 | 직접·전이·개발 의존성 구분, 누락·오식별 |
+| 탐지 성능 | 정답은 OSV `fixed`·GHSA 교차 확인, (패키지, 버전, 권고) 단위 | TP·FP·FN, 정밀도·재현율, Grype·OSV 불일치 별도 집계 |
+| 우선순위 품질 | 검토자 기준 등급과 비교 | 상위 k개 적중률, 등급 혼동 행렬, 알림 감소율 + 핵심 위험 재현율(항상 함께), 기한 등급 정확도 |
+| 근거 품질 | 결정론적 이진 검사 5종(아래) 우선, 설명만 LLM-as-judge | 환각 버전률, 검사별 실패 수 |
+| 패치 성공률 | 6단계 깔때기(아래) | 단계별 N 대비 비율, 쉬운/깨지는 사례 층화 |
+| 실험 비교 | LLM 단독 대 LLM+도구 근거, `osv-scanner fix` 단독 대 에이전트 | 환각 버전률·조치 성공률 차이 |
+| 안전성 | 미승인 실행·병합, 비밀 노출, 후보 밖 버전 채택, 근거 없는 안전 확정 검사 | 테스트 범위에서 발생 0건 목표 |
+| 운영 성능 | 동일 환경 반복 실행·장애 주입 | 아래 신뢰성 지표 |
 
 정밀도 = TP / (TP + FP), 재현율 = TP / (TP + FN). 분모가 0이면 미산정으로 표시한다. 패치 성공률의 분모는 실패·중단을 포함한 전체 패치 시도 수로 두고, 수정 가능한 사례만의 성공률은 별도 병기한다.
 
-### 평가 실행 — 추가 제안
+### 7.1 조치 성공 6단계 깔때기 — 제안
 
-1. 취약 버전, 수정 버전, 유사 이름 패키지, 전이 의존성, 업데이트 불가, 테스트 실패 사례를 포함한다.
-2. 커밋, 도구 버전, 취약점 DB 시각, 모델·프롬프트·설정, 실행 환경을 고정·기록한다.
-3. 개발 사례와 블라인드 평가 사례를 분리한다. 전문가가 검토하지 않았다면 ‘전문가 정답셋’이라고 부르지 않는다.
-4. 스캐너만 사용한 기준선과 AI 맥락 분석을 추가한 결과를 비교한다.
-5. 샘플 수, 성공·실패 원자료, 비용, 한계를 함께 공개한다. 예상 수치를 실측으로 쓰지 않는다.
-6. 재스캔에서 대상 취약점이 사라져도 보안 완전성·호환성을 보장하지 않는다고 기록한다.
+SWE-bench(FAIL_TO_PASS·PASS_TO_PASS), SEC-bench(컴파일·PoC 미재현·신규 이슈 없음)의 실행 기반 단계형 판정을 의존성 조치에 맞춘 것이다(학술). 기존 "빌드·테스트·재스캔 통과" 정의는 3~5단계에 해당한다.
+
+| 단계 | 판정 | 실패 유형 태그 |
+| --- | --- | --- |
+| 1. 유효 제안 | 레지스트리 실존, OSV `fixed` 이상·영향 범위 밖, 악성·yanked 아님 | 환각 버전/패키지, 불충분한 수정 |
+| 2. 설치 | lockfile 해석과 `npm ci` 성공 | 해석 불가, peer 충돌 |
+| 3. 빌드 | 빌드·컴파일 성공 | 컴파일 실패, 존재하지 않는 API |
+| 4. 회귀 | 기존 테스트 통과(PASS_TO_PASS) | 테스트 회귀 |
+| 5. 재스캔 | 대상 권고 소멸, 신규 권고 없음(Grype+OSV) | 취약점 잔존, 신규 취약점 |
+| 6. 사람 수용 | 검토자가 병합 가능 판정 | 과도한 변경, 설명 불충분 |
+
+외부 기준선(SEC-bench 34%, Google 15%)은 C/C++ 소스 패치라 의존성 조치와 직접 비교할 수 없다고 명시한다.
+
+### 7.2 알림 감소와 재현율 — 제안
+
+- 알림 감소율 = 1 − (Act·Attend 건수 / 원시 탐지 건수).
+- 핵심 위험 재현율 = KEV 등재·고 EPSS 항목 중 상위 등급(Act·Attend)으로 분류된 비율. 감소율은 **반드시 이 재현율과 함께** 보고해 노이즈 감소가 위험 누락의 대가가 아님을 보인다.
+- 감소율은 우리 데이터에서 실측한다. 공개 참고점은 나란히만 둔다: 전체 CVE 중 악용 약 5%(FIRST), Maven 도달 1% 미만(학술), Endor 92%·Datadog critical 18% 잔존(벤더 주장).
+
+### 7.3 환각·근거 검사 — 제안
+
+| 결정론적 검사 | 비고 |
+| --- | --- |
+| 제안 버전의 레지스트리 실존 | "환각 버전률" → Sonatype 27.76%(벤더 주장)와 비교 |
+| 제안 버전이 OSV 영향 범위 밖 | 불충분한 수정 검출 |
+| 제안 버전에 신규 권고 없음 | 다른 취약 버전으로 이동 방지 |
+| 인용 CVE/GHSA ID 실존·패키지 일치 | 잘못된 인용 검출 |
+| CVSS·KEV·EPSS 수치가 평가 시점 스냅샷과 일치 | 수치 환각 검출 |
+
+설명의 명확성·실행 가능성에만 LLM-as-judge를 쓴다. LLM 판정자는 위치·장황성·자기 선호 편향이 있고 사람 일치도는 약 80%다(학술). 루브릭 사용, 순서 무작위화, 생성 모델과 다른 계열 판정자, 사람 라벨 약 30건과의 Cohen's kappa를 보고한다.
+
+**핵심 실험:** "LLM 단독"(후보 목록 없이 버전 추천) 대 "LLM + 도구 근거"(4.4 근거 고정)를 같은 사례에서 비교해 환각 버전률과 깔때기 단계별 성공률 차이를 보인다. AI 이해·활용 역량 심사 기준을 직접 겨냥한다.
+
+### 7.4 신뢰성 지표 — 제안
+
+| 지표 | 정의 |
+| --- | --- |
+| 파이프라인 완주율 | 수정 정확성과 별개로 끝까지 실행된 비율 |
+| pass@1 / pass^3 | 같은 사례 3회 독립 실행이 모두 성공한 비율(τ-bench pass^k, 학술) |
+| 멱등성 | 이미 수정된 저장소 재실행 시 신규 PR 0건 |
+| 장애 주입 정상 저하율 | 레지스트리 5xx, OSV 타임아웃, 잘못된 LLM JSON 주입 시 안전하게 실패·보고한 비율 |
+| 재시도율·단계별 타임아웃률 | 단계별 집계 |
+| p50/p95 지연, 사례당 토큰·비용 | 동일 환경 측정 |
+| 구조화 출력 스키마 적합률 | 후보 밖 값 거부 포함 |
+
+업계 표준 목표치는 없으므로 임계값은 자체로 정하고 근거를 밝힌다.
+
+### 7.5 평가셋 규모와 실행 — 제안
+
+1. **P0(11월 4일 전):** npm 단일 생태계, nodejs-goof 포크 + 자체 픽스처로 15~20건. 그중 5건 이상을 블라인드로 분리.
+2. **본선 전:** 약 10개 저장소 × 3~5 CVE = 30~50건으로 확장.
+3. 층화: 직접/전이, 패치·마이너/메이저, KEV/비KEV, 도달/비도달, **수정 버전 없음 2~3건**("없음"이라고 답해야 정답), 악성 패키지 2~3건, 유사 이름 패키지, 테스트 실패 사례.
+4. 사례별 기록: 커밋 SHA, lockfile 해시, 권고 ID, 정답 최소 수정 버전, 기대 우선순위 등급, 테스트 명령, 컨테이너 digest, OSV/KEV/EPSS 스냅샷 날짜, 도구·모델·프롬프트 버전.
+5. 전문가가 검토하지 않았다면 '전문가 정답셋'이라고 부르지 않는다.
+6. 샘플 수, 성공·실패 원자료, 비용, 한계를 함께 공개한다. 예상 수치를 실측으로 쓰지 않는다(대회 FAQ의 입증 가능성 요건과도 일치).
+7. 재스캔에서 대상 취약점이 사라져도 보안 완전성·호환성을 보장하지 않는다고 기록한다.
 
 ## 8. 참고 링크
 
@@ -214,6 +383,49 @@ adGuard에서 정답셋·블라인드 사례·정밀도·재현율 평가를 다
 - [CISA KEV](https://www.cisa.gov/known-exploited-vulnerabilities-catalog), [FIRST EPSS](https://www.first.org/epss/), [FIRST CVSS](https://www.first.org/cvss/)
 - [LangGraph](https://github.com/langchain-ai/langgraph), [MCP](https://modelcontextprotocol.io/)
 - [Next.js](https://nextjs.org/), [FastAPI](https://fastapi.tiangolo.com/), [PostgreSQL](https://www.postgresql.org/), [GitHub REST API](https://docs.github.com/en/rest)
+
+### 대회 — 공식 확인(2026-10-30)
+
+- [LOTTE AX Challenge 2026](https://lotteaxchallenge.com) — 일정, 과제6 원문, 심사 기준, FAQ.
+
+### 보완 조사 출처 — [보고서](<../reports/공급망 에이전트 기획 보완 조사.md>) 8절 제안 기준
+
+**표준·데이터 출처(공식 확인)**
+
+- [FIRST CVSS v4.0 Specification](https://www.first.org/cvss/v4-0/specification-document), [FIRST EPSS binning](https://www.first.org/epss/articles/prob_percentile_bins)
+- [CISA SSVC](https://www.cisa.gov/stakeholder-specific-vulnerability-categorization-ssvc), [CISA BOD 22-01(폐지·BOD 26-04로 대체 표시)](https://www.cisa.gov/news-events/directives/bod-22-01-reducing-significant-risk-known-exploited-vulnerabilities)
+- [OpenVEX spec](https://github.com/openvex/spec/blob/main/OPENVEX-SPEC.md), [Dependency-Track Analysis States](https://docs.dependencytrack.org/triage/analysis-states/), [CycloneDX VEX](https://cyclonedx.org/capabilities/vex/), [Go Vulnerability Management](https://go.dev/doc/security/vuln/)
+
+**도구 문서(공식 확인)**
+
+- [Grype 결과 해석](https://oss.anchore.com/docs/guides/vulnerability/interpreting-results/), [Grype 설정](https://oss.anchore.com/docs/reference/grype/configuration/)
+- [OSV-Scanner Guided remediation](https://google.github.io/osv-scanner/experimental/guided-remediation/), [Renovate configuration options](https://docs.renovatebot.com/configuration-options/)
+- [Snyk Risk Score](https://docs.snyk.io/manage-risk/prioritize-issues-for-fixing/risk-score)
+- [Trivy GHSA-69fq-xp46-6x23](https://github.com/aquasecurity/trivy/security/advisories/GHSA-69fq-xp46-6x23), [snyk-labs/nodejs-goof](https://github.com/snyk-labs/nodejs-goof)
+- 릴리스: [syft](https://github.com/anchore/syft/releases), [grype](https://github.com/anchore/grype/releases), [osv-scanner](https://github.com/google/osv-scanner/releases), [trivy](https://github.com/aquasecurity/trivy/releases), [cdxgen](https://github.com/CycloneDX/cdxgen/releases), [dependency-track](https://github.com/DependencyTrack/dependency-track/releases)
+
+**학술**
+
+- [Alfadel et al. MSR 2021 — Dependabot 보안 PR](https://realiselab.github.io/publications/On-the-Use-of-Dependabot-Security-Pull-Requests.pdf), [He et al. TSE 2023](https://arxiv.org/abs/2206.07230v3)
+- [Mir et al. — Maven 도달성](https://arxiv.org/abs/2301.07972), [Ochoa et al. — semver 준수](https://arxiv.org/pdf/2110.07889)
+- [BUMP](https://arxiv.org/pdf/2401.09906), [Byam](https://arxiv.org/html/2505.07522v3), [SEC-bench](https://arxiv.org/pdf/2506.11791), [Wu et al. ISSTA 2023](https://arxiv.org/abs/2305.18607v1)
+- [Spracklen et al. USENIX Security 2025 — 패키지 환각](https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen)
+- [Imtiaz et al. ESEM 2021 — SCA 도구 비교](https://arxiv.org/abs/2108.12078), [Rosso et al. — SBOM 스캐너 조용한 실패](https://arxiv.org/abs/2512.17710), [Python SBOM 누락](https://arxiv.org/abs/2409.06390), [Mandl et al. — OSV 정답셋](https://arxiv.org/abs/2604.21111)
+- [SWE-bench](https://huggingface.co/datasets/princeton-nlp/SWE-bench/blob/refs%2Fpr%2F2/README.md?code=true), [τ-bench pass^k](https://arxiv.org/pdf/2406.12045), [ReliabilityBench](https://arxiv.org/pdf/2601.06112), [Zheng et al. — LLM-as-judge](https://arxiv.org/abs/2306.05685)
+
+**벤더 주장(명시해서 인용)**
+
+- [Sonatype 환각 27.76%(SD Times 보도)](https://sdtimes.com/security/report-ai-hallucinates-27-of-upgrade-recommendations-for-open-source-projects/), [Empirical Security EPSS v4](https://research.empiricalsecurity.com/research/introducing-epss-version-4)
+- [Tenable BOD 26-04 FAQ](https://www.tenable.com/blog/cisa-bod-26-04-FAQ-vulnerability-remediation-impact), [Invariant Labs GitHub MCP](https://invariantlabs.ai/blog/mcp-github-vulnerability)
+- [Google AI-powered patching](https://research.google/pubs/pub52980/), [DeepMind CodeMender](https://deepmind.google/blog/introducing-codemender-an-ai-agent-for-code-security/), [OpenAI Aardvark](https://openai.com/index/introducing-aardvark)
+- [Endor Labs 도달성](https://www.endorlabs.com/use-case/sca-with-reachability), [Datadog State of DevSecOps](https://www.datadoghq.com/state-of-devsecops/), [Meta AutoPatchBench](https://meta-llama.github.io/PurpleLlama/CyberSecEval/docs/benchmarks/autopatch)
+
+**미확인으로 유지**
+
+- NVD 2026-04 보강 축소: [Help Net Security](https://www.helpnetsecurity.com/2026/04/16/nist-national-vulnerability-database-nvd-enrichment/), [The Hacker News](https://thehackernews.com/2026/04/nist-limits-cve-enrichment-after-263.html) — 2차 보도, NIST 원문 미열람
+- KEV 연말 건수: [Cyble](https://cyble.com/blog/cisa-kev-2025-exploited-vulnerabilities-growth/) — 2차 집계
+- OWASP Top 10 for Agentic Applications: [Teleport 요약](https://goteleport.com/blog/owasp-top-10-agentic-applications) — 원문 미확인
+- Grype JSON 키 경로, Trivy의 EPSS/KEV 지원, BOD 26-04 원문 부록 A 조합 표, 정적 도달성의 거짓 음성([Dietrich et al. SCORED 2024](https://dl.acm.org/doi/pdf/10.1145/3689944.3696165))
 
 ---
 
