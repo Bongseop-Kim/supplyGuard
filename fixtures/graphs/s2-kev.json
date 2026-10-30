@@ -1,0 +1,114 @@
+{
+ "name": "s2-kev",
+ "nodes": [
+  {
+   "id": "event",
+   "type": "input.event",
+   "params": {
+    "kind": "kev",
+    "key": "CVE-2020-11023"
+   },
+   "position": {
+    "x": 40,
+    "y": 170
+   }
+  },
+  {
+   "id": "impact",
+   "type": "judge.impact",
+   "position": {
+    "x": 300,
+    "y": 170
+   }
+  },
+  {
+   "id": "exploit",
+   "type": "judge.exploitability",
+   "position": {
+    "x": 560,
+    "y": 170
+   }
+  },
+  {
+   "id": "prio",
+   "type": "judge.priority",
+   "position": {
+    "x": 820,
+    "y": 40
+   }
+  },
+  {
+   "id": "plan",
+   "type": "action.plan",
+   "position": {
+    "x": 1080,
+    "y": 170
+   }
+  },
+  {
+   "id": "gate",
+   "type": "control.approval",
+   "params": {
+    "note": "계열사별 티켓 발송 승인"
+   },
+   "position": {
+    "x": 1340,
+    "y": 170
+   }
+  },
+  {
+   "id": "ticket",
+   "type": "output.ticket",
+   "position": {
+    "x": 1600,
+    "y": 170
+   }
+  }
+ ],
+ "edges": [
+  {
+   "from": "event.event",
+   "to": "impact.event"
+  },
+  {
+   "from": "impact.enriched",
+   "to": "exploit.enriched"
+  },
+  {
+   "from": "impact.repo",
+   "to": "exploit.repo"
+  },
+  {
+   "from": "impact.enriched",
+   "to": "prio.enriched"
+  },
+  {
+   "from": "exploit.verdicts",
+   "to": "prio.verdicts"
+  },
+  {
+   "from": "impact.enriched",
+   "to": "plan.enriched"
+  },
+  {
+   "from": "exploit.verdicts",
+   "to": "plan.verdicts"
+  },
+  {
+   "from": "prio.priorities",
+   "to": "plan.priorities"
+  },
+  {
+   "from": "plan.plans",
+   "to": "gate.in"
+  },
+  {
+   "from": "gate.out",
+   "to": "ticket.plans"
+  }
+ ],
+ "trigger": {
+  "kind": "event",
+  "event": "kev"
+ }
+}

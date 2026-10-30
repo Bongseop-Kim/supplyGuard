@@ -1,0 +1,23 @@
+{
+ "name": "s2-trivy",
+ "nodes": [
+  {
+   "id": "impact",
+   "type": "judge.impact",
+   "params": {
+    "action": "aquasecurity/trivy-action",
+    "mutable_only": true,
+    "t0": "2026-03-19T00:00:00",
+    "t1": "2026-03-20T23:59:59"
+   },
+   "position": {
+    "x": 40,
+    "y": 40
+   }
+  }
+ ],
+ "edges": [],
+ "trigger": {
+  "kind": "manual"
+ }
+}

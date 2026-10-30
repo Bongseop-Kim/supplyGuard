@@ -1,0 +1,182 @@
+{
+ "name": "s1-scan",
+ "nodes": [
+  {
+   "id": "repo",
+   "type": "input.repo",
+   "params": {
+    "path": "fixtures/repos/goof",
+    "service_id": "a-mall-web"
+   },
+   "position": {
+    "x": 40,
+    "y": 170
+   }
+  },
+  {
+   "id": "syft",
+   "type": "sbom.syft",
+   "position": {
+    "x": 300,
+    "y": 170
+   }
+  },
+  {
+   "id": "grype",
+   "type": "scan.grype",
+   "position": {
+    "x": 560,
+    "y": 40
+   }
+  },
+  {
+   "id": "osv",
+   "type": "scan.osv",
+   "position": {
+    "x": 560,
+    "y": 300
+   }
+  },
+  {
+   "id": "merge",
+   "type": "scan.merge",
+   "position": {
+    "x": 820,
+    "y": 170
+   }
+  },
+  {
+   "id": "enrich",
+   "type": "enrich.feeds",
+   "position": {
+    "x": 1080,
+    "y": 170
+   }
+  },
+  {
+   "id": "exploit",
+   "type": "judge.exploitability",
+   "position": {
+    "x": 1340,
+    "y": 170
+   }
+  },
+  {
+   "id": "prio",
+   "type": "judge.priority",
+   "position": {
+    "x": 1600,
+    "y": 40
+   }
+  },
+  {
+   "id": "plan",
+   "type": "action.plan",
+   "position": {
+    "x": 1860,
+    "y": 170
+   }
+  },
+  {
+   "id": "vex",
+   "type": "output.vex",
+   "position": {
+    "x": 1600,
+    "y": 430
+   }
+  },
+  {
+   "id": "gate",
+   "type": "control.approval",
+   "params": {
+    "note": "담당자 티켓 발송 승인"
+   },
+   "position": {
+    "x": 2120,
+    "y": 170
+   }
+  },
+  {
+   "id": "ticket",
+   "type": "output.ticket",
+   "position": {
+    "x": 2380,
+    "y": 170
+   }
+  }
+ ],
+ "edges": [
+  {
+   "from": "repo.repo",
+   "to": "syft.repo"
+  },
+  {
+   "from": "syft.sbom",
+   "to": "grype.sbom"
+  },
+  {
+   "from": "syft.sbom",
+   "to": "osv.sbom"
+  },
+  {
+   "from": "grype.findings",
+   "to": "merge.a"
+  },
+  {
+   "from": "osv.findings",
+   "to": "merge.b"
+  },
+  {
+   "from": "merge.findings",
+   "to": "enrich.findings"
+  },
+  {
+   "from": "enrich.enriched",
+   "to": "exploit.enriched"
+  },
+  {
+   "from": "repo.repo",
+   "to": "exploit.repo"
+  },
+  {
+   "from": "syft.sbom",
+   "to": "exploit.sbom"
+  },
+  {
+   "from": "enrich.enriched",
+   "to": "prio.enriched"
+  },
+  {
+   "from": "exploit.verdicts",
+   "to": "prio.verdicts"
+  },
+  {
+   "from": "enrich.enriched",
+   "to": "plan.enriched"
+  },
+  {
+   "from": "exploit.verdicts",
+   "to": "plan.verdicts"
+  },
+  {
+   "from": "prio.priorities",
+   "to": "plan.priorities"
+  },
+  {
+   "from": "exploit.verdicts",
+   "to": "vex.verdicts"
+  },
+  {
+   "from": "plan.plans",
+   "to": "gate.in"
+  },
+  {
+   "from": "gate.out",
+   "to": "ticket.plans"
+  }
+ ],
+ "trigger": {
+  "kind": "schedule",
+  "cron": "0 2 * * *"
+ }
+}
